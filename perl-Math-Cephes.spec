@@ -19,7 +19,7 @@ Patch0:		%{name}-glibc.patch
 BuildRequires:	perl-devel >= 1:5.8.0
 BuildRequires:	rpm-perlprov >= 4.1-13
 # it's too x86-centric about fp internals
-ExclusiveArch:	%{ix86} amd64 ppc
+ExclusiveArch:	%{ix86} amd64
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
