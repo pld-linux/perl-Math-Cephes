@@ -1,0 +1,6874 @@
+--- Math-Cephes-0.36/libmd/gamma.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/gamma.c	2003-10-26 13:08:34.317490824 +0100
+@@ -270,20 +270,20 @@
+ extern int sgngam;
+ extern double MAXLOG, MAXNUM, PI;
+ #ifdef ANSIPROT
+-extern double pow ( double, double );
+-extern double log ( double );
+-extern double exp ( double );
+-extern double sin ( double );
++extern double cephes_pow ( double, double );
++extern double cephes_log ( double );
++extern double cephes_exp ( double );
++extern double cephes_sin ( double );
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+-extern double floor ( double );
+-extern double fabs ( double );
++extern double cephes_floor ( double );
++extern double cephes_fabs ( double );
+ extern int isnan ( double );
+ extern int isfinite ( double );
+ static double stirf ( double );
+ double lgam ( double );
+ #else
+-double pow(), log(), exp(), sin(), polevl(), p1evl(), floor(), fabs();
++double cephes_pow(), cephes_log(), cephes_exp(), cephes_sin(), polevl(), p1evl(), cephes_floor(), cephes_fabs();
+ int isnan(), isfinite();
+ static double stirf();
+ double lgam();
+@@ -305,15 +305,15 @@
+ 
+ w = 1.0/x;
+ w = 1.0 + w * polevl( w, STIR, 4 );
+-y = exp(x);
++y = cephes_exp(x);
+ if( x > MAXSTIR )
+ 	{ /* Avoid overflow in pow() */
+-	v = pow( x, 0.5 * x - 0.25 );
++	v = cephes_pow( x, 0.5 * x - 0.25 );
+ 	y = v * (v / y);
+ 	}
+ else
+ 	{
+-	y = pow( x, x - 0.5 ) / y;
++	y = cephes_pow( x, x - 0.5 ) / y;
+ 	}
+ y = SQTPI * y * w;
+ return( y );
+@@ -321,7 +321,7 @@
+ 
+ 
+ 
+-double gamma(x)
++double cephes_gamma(x)
+ double x;
+ {
+ double p, q, z;
+@@ -343,13 +343,13 @@
+ 	return(x);
+ #endif
+ #endif
+-q = fabs(x);
++q = cephes_fabs(x);
+ 
+ if( q > 33.0 )
+ 	{
+ 	if( x < 0.0 )
+ 		{
+-		p = floor(q);
++		p = cephes_floor(q);
+ 		if( p == q )
+ 			{
+ #ifdef NANS
+@@ -369,7 +369,7 @@
+ 			p += 1.0;
+ 			z = q - p;
+ 			}
+-		z = q * sin( PI * z );
++		z = q * cephes_sin( PI * z );
+ 		if( z == 0.0 )
+ 			{
+ #ifdef INFINITIES
+@@ -380,7 +380,7 @@
+ 			return( sgngam * MAXNUM);
+ #endif
+ 			}
+-		z = fabs(z);
++		z = cephes_fabs(z);
+ 		z = PI/(z * stirf(q) );
+ 		}
+ 	else
+@@ -595,7 +595,7 @@
+ 	{
+ 	q = -x;
+ 	w = lgam(q); /* note this modifies sgngam! */
+-	p = floor(q);
++	p = cephes_floor(q);
+ 	if( p == q )
+ 		{
+ lgsing:
+@@ -617,11 +617,11 @@
+ 		p += 1.0;
+ 		z = p - q;
+ 		}
+-	z = q * sin( PI * z );
++	z = q * cephes_sin( PI * z );
+ 	if( z == 0.0 )
+ 		goto lgsing;
+ /*	z = log(PI) - log( z ) - w;*/
+-	z = LOGPI - log( z ) - w;
++	z = LOGPI - cephes_log( z ) - w;
+ 	return( z );
+ 	}
+ 
+@@ -652,11 +652,11 @@
+ 	else
+ 		sgngam = 1;
+ 	if( u == 2.0 )
+-		return( log(z) );
++		return( cephes_log(z) );
+ 	p -= 2.0;
+ 	x = x + p;
+ 	p = x * polevl( x, B, 5 ) / p1evl( x, C, 6);
+-	return( log(z) + p );
++	return( cephes_log(z) + p );
+ 	}
+ 
+ if( x > MAXLGM )
+@@ -670,7 +670,7 @@
+ #endif
+ 	}
+ 
+-q = ( x - 0.5 ) * log(x) - x + LS2PI;
++q = ( x - 0.5 ) * cephes_log(x) - x + LS2PI;
+ if( x > 1.0e8 )
+ 	return( q );
+ 
+--- Math-Cephes-0.36/libmd/protos.h.orig	2002-08-23 17:10:49.000000000 +0200
++++ Math-Cephes-0.36/libmd/protos.h	2003-10-26 14:46:41.947435024 +0100
+@@ -22,39 +22,39 @@
+ 
+ extern double acosh ( double x );
+ extern int airy ( double x, double *y, double *z, double *u, double *v );
+-extern double asin ( double x );
+-extern double acos ( double x );
+-extern double asinh ( double x );
+-extern double atan ( double x );
+-extern double atan2 ( double y, double x );
+-extern double atanh ( double x );
++extern double cephes_asin ( double x );
++extern double cephes_acos ( double x );
++extern double cephes_asinh ( double x );
++extern double cephes_atan ( double x );
++extern double cephes_atan2 ( double y, double x );
++extern double cephes_atanh ( double x );
+ extern double bdtrc ( int k, int n, double p );
+ extern double bdtr ( int k, int n, double p );
+ extern double bdtri ( int k, int n, double y );
+ extern double beta ( double a, double b );
+ extern double lbeta ( double a, double b );
+ extern double btdtr ( double a, double b, double x );
+-extern double cbrt ( double x );
++extern double cephes_cbrt ( double x );
+ extern double chbevl ( double x, void *P, int n );
+ extern double chdtrc ( double df, double x );
+ extern double chdtr ( double df, double x );
+ extern double chdtri ( double df, double y );
+-extern void clog ( cmplx *z, cmplx *w );
+-extern void cexp ( cmplx *z, cmplx *w );
+-extern void csin ( cmplx *z, cmplx *w );
+-extern void ccos ( cmplx *z, cmplx *w );
+-extern void ctan ( cmplx *z, cmplx *w );
++extern void cephes_clog ( cmplx *z, cmplx *w );
++extern void cephes_cexp ( cmplx *z, cmplx *w );
++extern void cephes_csin ( cmplx *z, cmplx *w );
++extern void cephes_ccos ( cmplx *z, cmplx *w );
++extern void cephes_ctan ( cmplx *z, cmplx *w );
+ extern void ccot ( cmplx *z, cmplx *w );
+-extern void casin ( cmplx *z, cmplx *w );
+-extern void cacos ( cmplx *z, cmplx *w );
+-extern void catan ( cmplx *z, cmplx *w );
+-extern void csinh ( cmplx *z, cmplx *w );
+-extern void casinh ( cmplx *z, cmplx *w );
+-extern void ccosh ( cmplx *z, cmplx *w );
+-extern void cacosh ( cmplx *z, cmplx *w );
+-extern void ctanh ( cmplx *z, cmplx *w );
+-extern void catanh ( cmplx *z, cmplx *w );
+-extern void cpow ( cmplx *a, cmplx *z, cmplx *w );
++extern void cephes_casin ( cmplx *z, cmplx *w );
++extern void cephes_cacos ( cmplx *z, cmplx *w );
++extern void cephes_catan ( cmplx *z, cmplx *w );
++extern void cephes_csinh ( cmplx *z, cmplx *w );
++extern void cephes_casinh ( cmplx *z, cmplx *w );
++extern void cephes_ccosh ( cmplx *z, cmplx *w );
++extern void cephes_cacosh ( cmplx *z, cmplx *w );
++extern void cephes_ctanh ( cmplx *z, cmplx *w );
++extern void cephes_catanh ( cmplx *z, cmplx *w );
++extern void cephes_cpow ( cmplx *a, cmplx *z, cmplx *w );
+ extern void radd ( fract *a, fract *b, fract *c );
+ extern void rsub ( fract *a, fract *b, fract *c );
+ extern void rmul ( fract *a, fract *b, fract *c );
+@@ -66,37 +66,37 @@
+ extern void cdiv ( cmplx *a, cmplx *b, cmplx *c );
+ extern void cmov ( void *a, void *b );
+ extern void cneg ( cmplx *a );
+-__declspec (dllexport) double cabs ( cmplx *z );
+-extern void csqrt ( cmplx *z, cmplx *w );
+-extern double hypot ( double x, double y );
+-extern double cosh ( double x );
++__declspec (dllexport) double cephes_cabs ( cmplx *z );
++extern void cephes_csqrt ( cmplx *z, cmplx *w );
++extern double cephes_hypot ( double x, double y );
++extern double cephes_cosh ( double x );
+ extern double dawsn ( double xx );
+ extern double ellie ( double phi, double m );
+ extern double ellik ( double phi, double m );
+ extern double ellpe ( double x );
+ extern int ellpj ( double u, double m, double *x, double *y, double *z, double *a );
+ extern double ellpk ( double x );
+-extern double exp ( double x );
+-extern double exp10 ( double x );
++extern double cephes_exp ( double x );
++extern double cephes_exp10 ( double x );
+ /* extern double exp1m ( double x ); */
+-extern double exp2 ( double x );
++extern double cephes_exp2 ( double x );
+ extern double expn ( int n, double x );
+ extern double ei ( double x );
+-extern double fabs ( double x );
++extern double cephes_fabs ( double x );
+ extern double fac ( int i );
+ extern double fdtrc ( int ia, int ib, double x );
+ extern double fdtr ( int ia, int ib, double x );
+ extern double fdtri ( int ia, int ib, double y );
+-extern double ceil ( double x );
+-extern double floor ( double x );
+-extern double frexp ( double x, int *n);
++extern double cephes_ceil ( double x );
++extern double cephes_floor ( double x );
++extern double cephes_frexp ( double x, int *n);
+ /* extern double frexp ( double x, int *pw2 ); */
+-extern double ldexp ( double x, int pw2 );
++extern double cephes_ldexp ( double x, int pw2 );
+ /* extern int signbit ( double x ); */
+ /* extern int isnan ( double x ); */
+ /* extern int isfinite ( double x ); */
+ extern int fresnl ( double xxa, double *x, double *y);
+-extern double gamma ( double x );
++extern double cephes_gamma ( double x );
+ extern double lgam ( double x );
+ extern double gdtr ( double a, double b, double x );
+ extern double gdtrc ( double a, double b, double x );
+@@ -113,20 +113,20 @@
+ extern double incbet ( double aa, double bb, double xx );
+ extern double incbi ( double aa, double bb, double yy0 );
+ extern double iv ( double v, double x );
+-extern double j0 ( double x );
+-extern double y0 ( double x );
+-extern double j1 ( double x );
+-extern double y1 ( double x );
+-extern double jn ( int n, double x );
++extern double cephes_j0 ( double x );
++extern double cephes_y0 ( double x );
++extern double cephes_j1 ( double x );
++extern double cephes_y1 ( double x );
++extern double cephes_jn ( int n, double x );
+ extern double jv ( double n, double x );
+ extern double k0 ( double x );
+ extern double k0e ( double x );
+ extern double k1 ( double x );
+ extern double k1e ( double x );
+ extern double kn ( int nn, double x );
+-extern double log ( double x );
+-extern double log10 ( double x );
+-extern double log2 ( double x );
++extern double cephes_log ( double x );
++extern double cephes_log10 ( double x );
++extern double cephes_log2 ( double x );
+ extern long lrand ( void );
+ extern long lsqrt ( long x );
+ extern int mtherr ( char *name, int code );
+@@ -136,44 +136,44 @@
+ extern double nbdtr ( int k, int n, double p );
+ extern double nbdtri ( int k, int n, double p );
+ extern double ndtr ( double a );
+-extern double erfc ( double a );
+-extern double erf ( double x );
++extern double cephes_erfc ( double a );
++extern double cephes_erf ( double x );
+ extern double ndtri ( double y0 );
+ extern double pdtrc ( int k, double m );
+ extern double pdtr ( int k, double m );
+ extern double pdtri ( int k, double y );
+-extern double pow ( double x, double y );
++extern double cephes_pow ( double x, double y );
+ extern double powi ( double x, int nn );
+ extern double psi ( double x );
+ extern double rgamma ( double x );
+-extern double round ( double x );
++extern double cephes_round ( double x );
+ extern int shichi ( double x, double *y, double *z );
+ extern int sici ( double x, double *y, double *z );
+-extern double sin ( double x );
+-extern double cos ( double x );
++extern double cephes_sin ( double x );
++extern double cephes_cos ( double x );
+ extern double radian ( double d, double m, double s );
+ /*
+ extern int sincos ( double x, double *y, double *z, int flg );
+ */
+ extern double sindg ( double x );
+ extern double cosdg ( double x );
+-extern double sinh ( double x );
++extern double cephes_sinh ( double x );
+ extern double spence ( double x );
+-extern double sqrt ( double x );
++extern double cephes_sqrt ( double x );
+ extern double stdtr ( int k, double t );
+ extern double stdtri ( int k, double p );
+ extern double onef2 ( double a, double b, double c, double x, double *y );
+ extern double threef0 ( double a, double b, double c, double x, double *y );
+ extern double struve ( double v, double x );
+-extern double tan ( double x );
++extern double cephes_tan ( double x );
+ extern double cot ( double x );
+ extern double tandg ( double x );
+ extern double cotdg ( double x );
+-extern double tanh ( double x );
+-extern double log1p ( double x );
+-extern double expm1 ( double x );
++extern double cephes_tanh ( double x );
++extern double cephes_log1p ( double x );
++extern double cephes_expm1 ( double x );
+ extern double cosm1 ( double x );
+-extern double yn ( int n, double x );
++extern double cephes_yn ( int n, double x );
+ extern double yv ( double n, double x );
+ extern double zeta ( double x, double q );
+ extern double zetac ( double x );
+--- Math-Cephes-0.36/libmd/beta.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/beta.c	2003-10-26 12:35:49.398203960 +0100
+@@ -65,14 +65,14 @@
+ #endif
+ 
+ #ifdef ANSIPROT
+-extern double fabs ( double );
+-extern double gamma ( double );
++extern double cephes_fabs ( double );
++extern double cephes_gamma ( double );
+ extern double lgam ( double );
+-extern double exp ( double );
+-extern double log ( double );
+-extern double floor ( double );
++extern double cephes_exp ( double );
++extern double cephes_log ( double );
++extern double cephes_floor ( double );
+ #else
+-double fabs(), gamma(), lgam(), exp(), log(), floor();
++double cephes_fabs(), cephes_gamma(), lgam(), cephes_exp(), cephes_log(), cephes_floor();
+ #endif
+ extern double MAXLOG, MAXNUM;
+ extern int sgngam;
+@@ -87,18 +87,18 @@
+ 
+ if( a <= 0.0 )
+ 	{
+-	if( a == floor(a) )
++	if( a == cephes_floor(a) )
+ 		goto over;
+ 	}
+ if( b <= 0.0 )
+ 	{
+-	if( b == floor(b) )
++	if( b == cephes_floor(b) )
+ 		goto over;
+ 	}
+ 
+ 
+ y = a + b;
+-if( fabs(y) > MAXGAM )
++if( cephes_fabs(y) > MAXGAM )
+ 	{
+ 	y = lgam(y);
+ 	sign *= sgngam; /* keep track of the sign */
+@@ -112,22 +112,22 @@
+ 		mtherr( "beta", OVERFLOW );
+ 		return( sign * MAXNUM );
+ 		}
+-	return( sign * exp(y) );
++	return( sign * cephes_exp(y) );
+ 	}
+ 
+-y = gamma(y);
++y = cephes_gamma(y);
+ if( y == 0.0 )
+ 	goto over;
+ 
+ if( a > b )
+ 	{
+-	y = gamma(a)/y;
+-	y *= gamma(b);
++	y = cephes_gamma(a)/y;
++	y *= cephes_gamma(b);
+ 	}
+ else
+ 	{
+-	y = gamma(b)/y;
+-	y *= gamma(a);
++	y = cephes_gamma(b)/y;
++	y *= cephes_gamma(a);
+ 	}
+ 
+ return(y);
+@@ -147,18 +147,18 @@
+ 
+ if( a <= 0.0 )
+ 	{
+-	if( a == floor(a) )
++	if( a == cephes_floor(a) )
+ 		goto over;
+ 	}
+ if( b <= 0.0 )
+ 	{
+-	if( b == floor(b) )
++	if( b == cephes_floor(b) )
+ 		goto over;
+ 	}
+ 
+ 
+ y = a + b;
+-if( fabs(y) > MAXGAM )
++if( cephes_fabs(y) > MAXGAM )
+ 	{
+ 	y = lgam(y);
+ 	sign *= sgngam; /* keep track of the sign */
+@@ -170,7 +170,7 @@
+ 	return( y );
+ 	}
+ 
+-y = gamma(y);
++y = cephes_gamma(y);
+ if( y == 0.0 )
+ 	{
+ over:
+@@ -180,13 +180,13 @@
+ 
+ if( a > b )
+ 	{
+-	y = gamma(a)/y;
+-	y *= gamma(b);
++	y = cephes_gamma(a)/y;
++	y *= cephes_gamma(b);
+ 	}
+ else
+ 	{
+-	y = gamma(b)/y;
+-	y *= gamma(a);
++	y = cephes_gamma(b)/y;
++	y *= cephes_gamma(a);
+ 	}
+ 
+ if( y < 0 )
+@@ -197,5 +197,5 @@
+ else
+   sgngam = 1;
+ 
+-return( log(y) );
++return( cephes_log(y) );
+ }
+--- Math-Cephes-0.36/libmd/expn.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/expn.c	2003-10-26 12:59:41.863436144 +0100
+@@ -50,13 +50,13 @@
+ 
+ #include "mconf.h"
+ #ifdef ANSIPROT
+-extern double pow ( double, double );
+-extern double gamma ( double );
+-extern double log ( double );
+-extern double exp ( double );
+-extern double fabs ( double );
++extern double cephes_pow ( double, double );
++extern double cephes_gamma ( double );
++extern double cephes_log ( double );
++extern double cephes_exp ( double );
++extern double cephes_fabs ( double );
+ #else
+-double pow(), gamma(), log(), exp(), fabs();
++double cephes_pow(), cephes_gamma(), cephes_log(), cephes_exp(), cephes_fabs();
+ #endif
+ #define EUL 0.57721566490153286060
+ #define BIG  1.44115188075855872E+17
+@@ -96,7 +96,7 @@
+ 	}
+ 
+ if( n == 0 )
+-	return( exp(-x)/x );
++	return( cephes_exp(-x)/x );
+ 
+ /*							expn.c	*/
+ /*		Expansion for large n		*/
+@@ -109,7 +109,7 @@
+ 	ans = yk * t * (6.0 * x * x  -  8.0 * t * x  +  t * t);
+ 	ans = yk * (ans + t * (t  -  2.0 * x));
+ 	ans = yk * (ans + t);
+-	ans = (ans + 1.0) * exp( -x ) / xk;
++	ans = (ans + 1.0) * cephes_exp( -x ) / xk;
+ 	goto done;
+ 	}
+ 
+@@ -120,7 +120,7 @@
+ 
+ /*		Power series expansion		*/
+ 
+-psi = -EUL - log(x);
++psi = -EUL - cephes_log(x);
+ for( i=1; i<n; i++ )
+ 	psi = psi + 1.0/i;
+ 
+@@ -142,7 +142,7 @@
+ 		ans += yk/pk;
+ 		}
+ 	if( ans != 0.0 )
+-		t = fabs(yk/ans);
++		t = cephes_fabs(yk/ans);
+ 	else
+ 		t = 1.0;
+ 	}
+@@ -150,7 +150,7 @@
+ k = xk;
+ t = n;
+ r = n - 1;
+-ans = (pow(z, r) * psi / gamma(t)) - ans;
++ans = (cephes_pow(z, r) * psi / cephes_gamma(t)) - ans;
+ goto done;
+ 
+ /*							expn.c	*/
+@@ -181,7 +181,7 @@
+ 	if( qk != 0 )
+ 		{
+ 		r = pk/qk;
+-		t = fabs( (ans - r)/r );
++		t = cephes_fabs( (ans - r)/r );
+ 		ans = r;
+ 		}
+ 	else
+@@ -190,7 +190,7 @@
+ 	pkm1 = pk;
+ 	qkm2 = qkm1;
+ 	qkm1 = qk;
+-if( fabs(pk) > big )
++if( cephes_fabs(pk) > big )
+ 		{
+ 		pkm2 /= big;
+ 		pkm1 /= big;
+@@ -200,7 +200,7 @@
+ 	}
+ while( t > MACHEP );
+ 
+-ans *= exp( -x );
++ans *= cephes_exp( -x );
+ 
+ done:
+ return( ans );
+--- Math-Cephes-0.36/libmd/fac.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/fac.c	2003-10-26 10:05:36.097433952 +0100
+@@ -207,9 +207,9 @@
+ #endif
+ 
+ #ifdef ANSIPROT
+-double gamma ( double );
++double cephes_gamma ( double );
+ #else
+-double gamma();
++double cephes_gamma();
+ #endif
+ extern double MAXNUM;
+ 
+@@ -244,7 +244,7 @@
+ if( i > 55 )
+ 	{
+ 	x = i + 1;
+-	return( gamma(x) );
++	return( cephes_gamma(x) );
+ 	}
+ /* Compute directly for intermediate i. */
+ n = 34.0;
+--- Math-Cephes-0.36/libmd/hyp2f1.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/hyp2f1.c	2003-10-26 13:03:10.562709032 +0100
+@@ -90,18 +90,18 @@
+ #define ETHRESH 1.0e-12
+ 
+ #ifdef ANSIPROT
+-extern double fabs ( double );
+-extern double pow ( double, double );
+-extern double round ( double );
+-extern double gamma ( double );
+-extern double log ( double );
+-extern double exp ( double );
++extern double cephes_fabs ( double );
++extern double cephes_pow ( double, double );
++extern double cephes_round ( double );
++extern double cephes_gamma ( double );
++extern double cephes_log ( double );
++extern double cephes_exp ( double );
+ extern double psi ( double );
+ static double hyt2f1(double, double, double, double, double *);
+ static double hys2f1(double, double, double, double, double *);
+ double hyp2f1(double, double, double, double);
+ #else
+-double fabs(), pow(), round(), gamma(), log(), exp(), psi();
++double cephes_fabs(), cephes_pow(), cephes_round(), cephes_gamma(), cephes_log(), cephes_exp(), psi();
+ static double hyt2f1();
+ static double hys2f1();
+ double hyp2f1();
+@@ -117,34 +117,34 @@
+ int flag, i, aid;
+ 
+ err = 0.0;
+-ax = fabs(x);
++ax = cephes_fabs(x);
+ s = 1.0 - x;
+ flag = 0;
+-ia = round(a); /* nearest integer to a */
+-ib = round(b);
++ia = cephes_round(a); /* nearest integer to a */
++ib = cephes_round(b);
+ 
+ if( a <= 0 )
+ 	{
+-	if( fabs(a-ia) < EPS )		/* a is a negative integer */
++	if( cephes_fabs(a-ia) < EPS )		/* a is a negative integer */
+ 		flag |= 1;
+ 	}
+ 
+ if( b <= 0 )
+ 	{
+-	if( fabs(b-ib) < EPS )		/* b is a negative integer */
++	if( cephes_fabs(b-ib) < EPS )		/* b is a negative integer */
+ 		flag |= 2;
+ 	}
+ 
+ if( ax < 1.0 )
+ 	{
+-	if( fabs(b-c) < EPS )		/* b = c */
++	if( cephes_fabs(b-c) < EPS )		/* b = c */
+ 		{
+-		y = pow( s, -a );	/* s to the -a power */
++		y = cephes_pow( s, -a );	/* s to the -a power */
+ 		goto hypdon;
+ 		}
+-	if( fabs(a-c) < EPS )		/* a = c */
++	if( cephes_fabs(a-c) < EPS )		/* a = c */
+ 		{
+-		y = pow( s, -b );	/* s to the -b power */
++		y = cephes_pow( s, -b );	/* s to the -b power */
+ 		goto hypdon;
+ 		}
+ 	}
+@@ -153,8 +153,8 @@
+ 
+ if( c <= 0.0 )
+ 	{
+-	ic = round(c); 	/* nearest integer to c */
+-	if( fabs(c-ic) < EPS )		/* c is a negative integer */
++	ic = cephes_round(c); 	/* nearest integer to c */
++	if( cephes_fabs(c-ic) < EPS )		/* c is a negative integer */
+ 		{
+ 		/* check if termination before explosion */
+ 		if( (flag & 1) && (ia > ic) )
+@@ -172,22 +172,22 @@
+ 	goto hypdiv;
+ 
+ p = c - a;
+-ia = round(p); /* nearest integer to c-a */
+-if( (ia <= 0.0) && (fabs(p-ia) < EPS) )	/* negative int c - a */
++ia = cephes_round(p); /* nearest integer to c-a */
++if( (ia <= 0.0) && (cephes_fabs(p-ia) < EPS) )	/* negative int c - a */
+ 	flag |= 4;
+ 
+ r = c - b;
+-ib = round(r); /* nearest integer to c-b */
+-if( (ib <= 0.0) && (fabs(r-ib) < EPS) )	/* negative int c - b */
++ib = cephes_round(r); /* nearest integer to c-b */
++if( (ib <= 0.0) && (cephes_fabs(r-ib) < EPS) )	/* negative int c - b */
+ 	flag |= 8;
+ 
+ d = c - a - b;
+-id = round(d); /* nearest integer to d */
+-q = fabs(d-id);
++id = cephes_round(d); /* nearest integer to d */
++q = cephes_fabs(d-id);
+ 
+ /* Thanks to Christian Burger <BURGER@DMRHRZ11.HRZ.Uni-Marburg.DE>
+  * for reporting a bug here.  */
+-if( fabs(ax-1.0) < EPS )			/* |x| == 1.0	*/
++if( cephes_fabs(ax-1.0) < EPS )			/* |x| == 1.0	*/
+ 	{
+ 	if( x > 0.0 )
+ 		{
+@@ -200,7 +200,7 @@
+ 			}
+ 		if( d <= 0.0 )
+ 			goto hypdiv;
+-		y = gamma(c)*gamma(d)/(gamma(p)*gamma(r));
++		y = cephes_gamma(c)*cephes_gamma(d)/(cephes_gamma(p)*cephes_gamma(r));
+ 		goto hypdon;
+ 		}
+ 
+@@ -256,7 +256,7 @@
+  * AMS55 #15.3.3
+  */
+ hypf:
+-y = pow( s, d ) * hys2f1( c-a, c-b, c, x, &err );
++y = cephes_pow( s, d ) * hys2f1( c-a, c-b, c, x, &err );
+ goto hypdon;
+ 
+ /* The alarm exit */
+@@ -286,20 +286,20 @@
+ if( x < -0.5 )
+ 	{
+ 	if( b > a )
+-		y = pow( s, -a ) * hys2f1( a, c-b, c, -x/s, &err );
++		y = cephes_pow( s, -a ) * hys2f1( a, c-b, c, -x/s, &err );
+ 
+ 	else
+-		y = pow( s, -b ) * hys2f1( c-a, b, c, -x/s, &err );
++		y = cephes_pow( s, -b ) * hys2f1( c-a, b, c, -x/s, &err );
+ 
+ 	goto done;
+ 	}
+ 
+ d = c - a - b;
+-id = round(d);	/* nearest integer to d */
++id = cephes_round(d);	/* nearest integer to d */
+ 
+ if( x > 0.9 )
+ {
+-if( fabs(d-id) > EPS ) /* test for integer c-a-b */
++if( cephes_fabs(d-id) > EPS ) /* test for integer c-a-b */
+ 	{
+ /* Try the power series first */
+ 	y = hys2f1( a, b, c, x, &err );
+@@ -307,18 +307,18 @@
+ 		goto done;
+ /* If power series fails, then apply AMS55 #15.3.6 */
+ 	q = hys2f1( a, b, 1.0-d, s, &err );	
+-	q *= gamma(d) /(gamma(c-a) * gamma(c-b));
+-	r = pow(s,d) * hys2f1( c-a, c-b, d+1.0, s, &err1 );
+-	r *= gamma(-d)/(gamma(a) * gamma(b));
++	q *= cephes_gamma(d) /(cephes_gamma(c-a) * cephes_gamma(c-b));
++	r = cephes_pow(s,d) * hys2f1( c-a, c-b, d+1.0, s, &err1 );
++	r *= cephes_gamma(-d)/(cephes_gamma(a) * cephes_gamma(b));
+ 	y = q + r;
+ 
+-	q = fabs(q); /* estimate cancellation error */
+-	r = fabs(r);
++	q = cephes_fabs(q); /* estimate cancellation error */
++	r = cephes_fabs(r);
+ 	if( q > r )
+ 		r = q;
+ 	err += err1 + (MACHEP*r)/y;
+ 
+-	y *= gamma(c);
++	y *= cephes_gamma(c);
+ 	goto done;
+ 	}
+ else
+@@ -339,13 +339,13 @@
+ 		aid = -id;
+ 		}
+ 
+-	ax = log(s);
++	ax = cephes_log(s);
+ 
+ 	/* sum for t = 0 */
+ 	y = psi(1.0) + psi(1.0+e) - psi(a+d1) - psi(b+d1) - ax;
+-	y /= gamma(e+1.0);
++	y /= cephes_gamma(e+1.0);
+ 
+-	p = (a+d1) * (b+d1) * s / gamma(e+2.0);	/* Poch for t=1 */
++	p = (a+d1) * (b+d1) * s / cephes_gamma(e+2.0);	/* Poch for t=1 */
+ 	t = 1.0;
+ 	do
+ 		{
+@@ -357,12 +357,12 @@
+ 		p *= (b+t+d1) / (t+1.0+e);
+ 		t += 1.0;
+ 		}
+-	while( fabs(q/y) > EPS );
++	while( cephes_fabs(q/y) > EPS );
+ 
+ 
+ 	if( id == 0.0 )
+ 		{
+-		y *= gamma(c)/(gamma(a)*gamma(b));
++		y *= cephes_gamma(c)/(cephes_gamma(a)*cephes_gamma(b));
+ 		goto psidon;
+ 		}
+ 
+@@ -382,14 +382,14 @@
+ 		y1 += p;
+ 		}
+ nosum:
+-	p = gamma(c);
+-	y1 *= gamma(e) * p / (gamma(a+d1) * gamma(b+d1));
++	p = cephes_gamma(c);
++	y1 *= cephes_gamma(e) * p / (cephes_gamma(a+d1) * cephes_gamma(b+d1));
+ 
+-	y *= p / (gamma(a+d2) * gamma(b+d2));
++	y *= p / (cephes_gamma(a+d2) * cephes_gamma(b+d2));
+ 	if( (aid & 1) != 0 )
+ 		y = -y;
+ 
+-	q = pow( s, id );	/* s to the id power */
++	q = cephes_pow( s, id );	/* s to the id power */
+ 	if( id > 0.0 )
+ 		y *= q;
+ 	else
+@@ -433,7 +433,7 @@
+ k = 0.0;
+ do
+ 	{
+-	if( fabs(h) < EPS )
++	if( cephes_fabs(h) < EPS )
+ 		{
+ 		*loss = 1.0;
+ 		return( MAXNUM );
+@@ -441,7 +441,7 @@
+ 	m = k + 1.0;
+ 	u = u * ((f+k) * (g+k) * x / ((h+k) * m));
+ 	s += u;
+-	k = fabs(u);  /* remember largest term summed */
++	k = cephes_fabs(u);  /* remember largest term summed */
+ 	if( k > umax )
+ 		umax = k;
+ 	k = m;
+@@ -451,10 +451,10 @@
+ 		return(s);
+ 		}
+ 	}
+-while( fabs(u/s) > MACHEP );
++while( cephes_fabs(u/s) > MACHEP );
+ 
+ /* return estimated relative error */
+-*loss = (MACHEP*umax)/fabs(s) + (MACHEP*i);
++*loss = (MACHEP*umax)/cephes_fabs(s) + (MACHEP*i);
+ 
+ return(s);
+ }
+--- Math-Cephes-0.36/libmd/iv.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/iv.c	2003-10-26 12:39:14.464029216 +0100
+@@ -55,13 +55,13 @@
+ #include "mconf.h"
+ #ifdef ANSIPROT
+ extern double hyperg ( double, double, double );
+-extern double exp ( double );
+-extern double gamma ( double );
+-extern double log ( double );
+-extern double fabs ( double );
+-extern double floor ( double );
++extern double cephes_exp ( double );
++extern double cephes_gamma ( double );
++extern double cephes_log ( double );
++extern double cephes_fabs ( double );
++extern double cephes_floor ( double );
+ #else
+-double hyperg(), exp(), gamma(), log(), fabs(), floor();
++double hyperg(), cephes_exp(), cephes_gamma(), cephes_log(), cephes_fabs(), cephes_floor();
+ #endif
+ extern double MACHEP, MAXNUM;
+ 
+@@ -72,7 +72,7 @@
+ double t, ax;
+ 
+ /* If v is a negative integer, invoke symmetry */
+-t = floor(v);
++t = cephes_floor(v);
+ if( v < 0.0 )
+ 	{
+ 	if( t == v )
+@@ -90,7 +90,7 @@
+ 		mtherr( "iv", DOMAIN );
+ 		return( 0.0 );
+ 		}
+-	if( v != 2.0 * floor(v/2.0) )
++	if( v != 2.0 * cephes_floor(v/2.0) )
+ 		sign = -1;
+ 	}
+ 
+@@ -108,9 +108,9 @@
+ 		return( 0.0 );
+ 	}
+ 
+-ax = fabs(x);
+-t = v * log( 0.5 * ax )  -  x;
+-t = sign * exp(t) / gamma( v + 1.0 );
++ax = cephes_fabs(x);
++t = v * cephes_log( 0.5 * ax )  -  x;
++t = sign * cephes_exp(t) / cephes_gamma( v + 1.0 );
+ ax = v + 0.5;
+ return( t * hyperg( ax,  2.0 * ax,  2.0 * x ) );
+ }
+--- Math-Cephes-0.36/libmd/hyperg.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/hyperg.c	2003-10-26 12:38:34.186152384 +0100
+@@ -67,17 +67,17 @@
+ #include "mconf.h"
+ 
+ #ifdef ANSIPROT
+-extern double exp ( double );
+-extern double log ( double );
+-extern double gamma ( double );
++extern double cephes_exp ( double );
++extern double cephes_log ( double );
++extern double cephes_gamma ( double );
+ extern double lgam ( double );
+-extern double fabs ( double );
++extern double cephes_fabs ( double );
+ double hyp2f0 ( double, double, double, int, double * );
+ static double hy1f1p(double, double, double, double *);
+ static double hy1f1a(double, double, double, double *);
+ double hyperg (double, double, double);
+ #else
+-double exp(), log(), gamma(), lgam(), fabs(), hyp2f0();
++double cephes_exp(), cephes_log(), cephes_gamma(), lgam(), cephes_fabs(), hyp2f0();
+ static double hy1f1p();
+ static double hy1f1a();
+ double hyperg();
+@@ -91,8 +91,8 @@
+ 
+ /* See if a Kummer transformation will help */
+ temp = b - a;
+-if( fabs(temp) < 0.001 * fabs(a) )
+-	return( exp(x) * hyperg( temp, b, -x )  );
++if( cephes_fabs(temp) < 0.001 * cephes_fabs(a) )
++	return( cephes_exp(x) * hyperg( temp, b, -x )  );
+ 
+ 
+ psum = hy1f1p( a, b, x, &pcanc );
+@@ -158,7 +158,7 @@
+ 	u = x * ( an / (bn * n) );
+ 
+ 	/* check for blowup */
+-	temp = fabs(u);
++	temp = cephes_fabs(u);
+ 	if( (temp > 1.0 ) && (maxt > (MAXNUM/temp)) )
+ 		{
+ 		pcanc = 1.0;	/* estimate 100% error */
+@@ -167,11 +167,11 @@
+ 
+ 	a0 *= u;
+ 	sum += a0;
+-	t = fabs(a0);
++	t = cephes_fabs(a0);
+ 	if( t > maxt )
+ 		maxt = t;
+ /*
+-	if( (maxt/fabs(sum)) > 1.0e17 )
++	if( (maxt/cephes_fabs(sum)) > 1.0e17 )
+ 		{
+ 		pcanc = 1.0;
+ 		goto blowup;
+@@ -186,9 +186,9 @@
+ 
+ /* estimate error due to roundoff and cancellation */
+ if( sum != 0.0 )
+-	maxt /= fabs(sum);
++	maxt /= cephes_fabs(sum);
+ maxt *= MACHEP; 	/* this way avoids multiply overflow */
+-pcanc = fabs( MACHEP * n  +  maxt );
++pcanc = cephes_fabs( MACHEP * n  +  maxt );
+ 
+ blowup:
+ 
+@@ -227,7 +227,7 @@
+ 	asum = MAXNUM;
+ 	goto adone;
+ 	}
+-temp = log( fabs(x) );
++temp = cephes_log( cephes_fabs(x) );
+ t = x + temp * (a-b);
+ u = -temp * a;
+ 
+@@ -240,16 +240,16 @@
+ 
+ h1 = hyp2f0( a, a-b+1, -1.0/x, 1, &err1 );
+ 
+-temp = exp(u) / gamma(b-a);
++temp = cephes_exp(u) / cephes_gamma(b-a);
+ h1 *= temp;
+ err1 *= temp;
+ 
+ h2 = hyp2f0( b-a, 1.0-a, 1.0/x, 2, &err2 );
+ 
+ if( a < 0 )
+-	temp = exp(t) / gamma(a);
++	temp = cephes_exp(t) / cephes_gamma(a);
+ else
+-	temp = exp( t - lgam(a) );
++	temp = cephes_exp( t - lgam(a) );
+ 
+ h2 *= temp;
+ err2 *= temp;
+@@ -259,19 +259,19 @@
+ else
+ 	asum = h2;
+ 
+-acanc = fabs(err1) + fabs(err2);
++acanc = cephes_fabs(err1) + cephes_fabs(err2);
+ 
+ 
+ if( b < 0 )
+ 	{
+-	temp = gamma(b);
++	temp = cephes_gamma(b);
+ 	asum *= temp;
+-	acanc *= fabs(temp);
++	acanc *= cephes_fabs(temp);
+ 	}
+ 
+ 
+ if( asum != 0.0 )
+-	acanc /= fabs(asum);
++	acanc /= cephes_fabs(asum);
+ 
+ acanc *= 30.0;	/* fudge factor, since error of asymptotic formula
+ 		 * often seems this much larger than advertised */
+@@ -313,12 +313,12 @@
+ 	u = an * (bn * x / n);
+ 
+ 	/* check for blowup */
+-	temp = fabs(u);
++	temp = cephes_fabs(u);
+ 	if( (temp > 1.0 ) && (maxt > (MAXNUM/temp)) )
+ 		goto error;
+ 
+ 	a0 *= u;
+-	t = fabs(a0);
++	t = cephes_fabs(a0);
+ 
+ 	/* terminating condition for asymptotic series */
+ 	if( t > tlast )
+@@ -343,7 +343,7 @@
+ pdone:	/* series converged! */
+ 
+ /* estimate error due to roundoff and cancellation */
+-*err = fabs(  MACHEP * (n + maxt)  );
++*err = cephes_fabs(  MACHEP * (n + maxt)  );
+ 
+ alast = a0;
+ goto done;
+@@ -371,7 +371,7 @@
+ }
+ 
+ /* estimate error due to roundoff, cancellation, and nonconvergence */
+-*err = MACHEP * (n + maxt)  +  fabs ( a0 );
++*err = MACHEP * (n + maxt)  +  cephes_fabs ( a0 );
+ 
+ 
+ done:
+--- Math-Cephes-0.36/libmd/incbet.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/incbet.c	2003-10-26 13:00:33.945518464 +0100
+@@ -69,17 +69,17 @@
+ 
+ extern double MACHEP, MINLOG, MAXLOG;
+ #ifdef ANSIPROT
+-extern double gamma ( double );
++extern double cephes_gamma ( double );
+ extern double lgam ( double );
+-extern double exp ( double );
+-extern double log ( double );
+-extern double pow ( double, double );
+-extern double fabs ( double );
++extern double cephes_exp ( double );
++extern double cephes_log ( double );
++extern double cephes_pow ( double, double );
++extern double cephes_fabs ( double );
+ static double incbcf(double, double, double);
+ static double incbd(double, double, double);
+ static double pseries(double, double, double);
+ #else
+-double gamma(), lgam(), exp(), log(), pow(), fabs();
++double cephes_gamma(), lgam(), cephes_exp(), cephes_log(), cephes_pow(), cephes_fabs();
+ static double incbcf(), incbd(), pseries();
+ #endif
+ 
+@@ -150,24 +150,24 @@
+      a      b   _             _     _
+     x  (1-x)   | (a+b) / ( a | (a) | (b) ) .   */
+ 
+-y = a * log(x);
+-t = b * log(xc);
+-if( (a+b) < MAXGAM && fabs(y) < MAXLOG && fabs(t) < MAXLOG )
++y = a * cephes_log(x);
++t = b * cephes_log(xc);
++if( (a+b) < MAXGAM && cephes_fabs(y) < MAXLOG && cephes_fabs(t) < MAXLOG )
+ 	{
+-	t = pow(xc,b);
+-	t *= pow(x,a);
++	t = cephes_pow(xc,b);
++	t *= cephes_pow(x,a);
+ 	t /= a;
+ 	t *= w;
+-	t *= gamma(a+b) / (gamma(a) * gamma(b));
++	t *= cephes_gamma(a+b) / (cephes_gamma(a) * cephes_gamma(b));
+ 	goto done;
+ 	}
+ /* Resort to logarithms.  */
+ y += t + lgam(a+b) - lgam(a) - lgam(b);
+-y += log(w/a);
++y += cephes_log(w/a);
+ if( y < MINLOG )
+ 	t = 0.0;
+ else
+-	t = exp(y);
++	t = cephes_exp(y);
+ 
+ done:
+ 
+@@ -233,7 +233,7 @@
+ 		r = pk/qk;
+ 	if( r != 0 )
+ 		{
+-		t = fabs( (ans - r)/r );
++		t = cephes_fabs( (ans - r)/r );
+ 		ans = r;
+ 		}
+ 	else
+@@ -251,14 +251,14 @@
+ 	k7 += 2.0;
+ 	k8 += 2.0;
+ 
+-	if( (fabs(qk) + fabs(pk)) > big )
++	if( (cephes_fabs(qk) + cephes_fabs(pk)) > big )
+ 		{
+ 		pkm2 *= biginv;
+ 		pkm1 *= biginv;
+ 		qkm2 *= biginv;
+ 		qkm1 *= biginv;
+ 		}
+-	if( (fabs(qk) < biginv) || (fabs(pk) < biginv) )
++	if( (cephes_fabs(qk) < biginv) || (cephes_fabs(pk) < biginv) )
+ 		{
+ 		pkm2 *= big;
+ 		pkm1 *= big;
+@@ -326,7 +326,7 @@
+ 		r = pk/qk;
+ 	if( r != 0 )
+ 		{
+-		t = fabs( (ans - r)/r );
++		t = cephes_fabs( (ans - r)/r );
+ 		ans = r;
+ 		}
+ 	else
+@@ -344,14 +344,14 @@
+ 	k7 += 2.0;
+ 	k8 += 2.0;
+ 
+-	if( (fabs(qk) + fabs(pk)) > big )
++	if( (cephes_fabs(qk) + cephes_fabs(pk)) > big )
+ 		{
+ 		pkm2 *= biginv;
+ 		pkm1 *= biginv;
+ 		qkm2 *= biginv;
+ 		qkm1 *= biginv;
+ 		}
+-	if( (fabs(qk) < biginv) || (fabs(pk) < biginv) )
++	if( (cephes_fabs(qk) < biginv) || (cephes_fabs(pk) < biginv) )
+ 		{
+ 		pkm2 *= big;
+ 		pkm1 *= big;
+@@ -380,7 +380,7 @@
+ n = 2.0;
+ s = 0.0;
+ z = MACHEP * ai;
+-while( fabs(v) > z )
++while( cephes_fabs(v) > z )
+ 	{
+ 	u = (n - b) * x / n;
+ 	t *= u;
+@@ -391,19 +391,19 @@
+ s += t1;
+ s += ai;
+ 
+-u = a * log(x);
+-if( (a+b) < MAXGAM && fabs(u) < MAXLOG )
++u = a * cephes_log(x);
++if( (a+b) < MAXGAM && cephes_fabs(u) < MAXLOG )
+ 	{
+-	t = gamma(a+b)/(gamma(a)*gamma(b));
+-	s = s * t * pow(x,a);
++	t = cephes_gamma(a+b)/(cephes_gamma(a)*cephes_gamma(b));
++	s = s * t * cephes_pow(x,a);
+ 	}
+ else
+ 	{
+-	t = lgam(a+b) - lgam(a) - lgam(b) + u + log(s);
++	t = lgam(a+b) - lgam(a) - lgam(b) + u + cephes_log(s);
+ 	if( t < MINLOG )
+ 		s = 0.0;
+ 	else
+-	s = exp(t);
++	s = cephes_exp(t);
+ 	}
+ return(s);
+ }
+--- Math-Cephes-0.36/libmd/jv.c.orig	2003-10-26 10:08:38.000000000 +0100
++++ Math-Cephes-0.36/libmd/jv.c	2003-10-26 13:09:27.959336024 +0100
+@@ -58,21 +58,21 @@
+ 
+ #ifdef ANSIPROT
+ extern int airy ( double, double *, double *, double *, double * );
+-extern double fabs ( double );
+-extern double floor ( double );
+-extern double frexp ( double, int * );
++extern double cephes_fabs ( double );
++extern double cephes_floor ( double );
++extern double cephes_frexp ( double, int * );
+ extern double polevl ( double, void *, int );
+-extern double j0 ( double );
+-extern double j1 ( double );
+-extern double sqrt ( double );
+-extern double cbrt ( double );
+-extern double exp ( double );
+-extern double log ( double );
+-extern double sin ( double );
+-extern double cos ( double );
+-extern double acos ( double );
+-extern double pow ( double, double );
+-extern double gamma ( double );
++extern double cephes_j0 ( double );
++extern double cephes_j1 ( double );
++extern double cephes_sqrt ( double );
++extern double cephes_cbrt ( double );
++extern double cephes_exp ( double );
++extern double cephes_log ( double );
++extern double cephes_sin ( double );
++extern double cephes_cos ( double );
++extern double cephes_acos ( double );
++extern double cephes_pow ( double, double );
++extern double cephes_gamma ( double );
+ extern double lgam ( double );
+ static double recur(double *, double, double *, int);
+ static double jvs(double, double);
+@@ -81,8 +81,8 @@
+ static double jnt(double, double);
+ #else
+ int airy();
+-double fabs(), floor(), frexp(), polevl(), j0(), j1(), sqrt(), cbrt();
+-double exp(), log(), sin(), cos(), acos(), pow(), gamma(), lgam();
++double cephes_fabs(), cephes_floor(), cephes_frexp(), polevl(), cephes_j0(), cephes_j1(), cephes_sqrt(), cephes_cbrt();
++double cephes_exp(), cephes_log(), cephes_sin(), cephes_cos(), cephes_acos(), cephes_pow(), cephes_gamma(), lgam();
+ static double recur(), jvs(), hankel(), jnx(), jnt();
+ #endif
+ 
+@@ -97,12 +97,12 @@
+ 
+ nint = 0;	/* Flag for integer n */
+ sign = 1;	/* Flag for sign inversion */
+-an = fabs( n );
+-y = floor( an );
++an = cephes_fabs( n );
++y = cephes_floor( an );
+ if( y == an )
+ 	{
+ 	nint = 1;
+-	i = an - 16384.0 * floor( an/16384.0 );
++	i = an - 16384.0 * cephes_floor( an/16384.0 );
+ 	if( n < 0.0 )
+ 		{
+ 		if( i & 1 )
+@@ -116,9 +116,9 @@
+ 		x = -x;
+ 		}
+ 	if( n == 0.0 )
+-		return( j0(x) );
++		return( cephes_j0(x) );
+ 	if( n == 1.0 )
+-		return( sign * j1(x) );
++		return( sign * cephes_j1(x) );
+ 	}
+ 
+ if( (x < 0.0) && (y != an) )
+@@ -128,13 +128,13 @@
+ 	goto done;
+  	}
+ 
+-y = fabs(x);
++y = cephes_fabs(x);
+ 
+ if( y < MACHEP )
+ 	goto underf;
+ 
+-k = 3.6 * sqrt(y);
+-t = 3.6 * sqrt(an);
++k = 3.6 * cephes_sqrt(y);
++t = 3.6 * cephes_sqrt(an);
+ if( (y < t) && (an > 21.0) )
+ 	return( sign * jvs(n,x) );
+ if( (an < k) && (y > 21.0) )
+@@ -152,12 +152,12 @@
+ 		q = recur( &n, x, &k, 1 );
+ 		if( k == 0.0 )
+ 			{
+-			y = j0(x)/q;
++			y = cephes_j0(x)/q;
+ 			goto done;
+ 			}
+ 		if( k == 1.0 )
+ 			{
+-			y = j1(x)/q;
++			y = cephes_j1(x)/q;
+ 			goto done;
+ 			}
+ 		}
+@@ -176,7 +176,7 @@
+ 		y = y + an + 1.0;
+ 		if( y < 30.0 )
+ 			y = 30.0;
+-		y = n + floor(y-n);
++		y = n + cephes_floor(y-n);
+ 		q = recur( &y, x, &k, 0 );
+ 		y = jvs(y,x) * q;
+ 		goto done;
+@@ -194,8 +194,8 @@
+ 		{
+ 		if( n < 0.0 )
+ 			k = -k;
+-		q = n - floor(n);
+-		k = floor(k) + q;
++		q = n - cephes_floor(n);
++		k = cephes_floor(k) + q;
+ 		if( n > 0.0 )
+ 			q = recur( &n, x, &k, 1 );
+ 		else
+@@ -221,7 +221,7 @@
+ /* boundary between convergence of
+  * power series and Hankel expansion
+  */
+-	y = fabs(k);
++	y = cephes_fabs(k);
+ 	if( y < 26.0 )
+ 		t = (0.0083*y + 0.09)*y + 12.9;
+ 	else
+@@ -316,7 +316,7 @@
+ 		r = 0.0;
+ 	if( r != 0 )
+ 		{
+-		t = fabs( (ans - r)/r );
++		t = cephes_fabs( (ans - r)/r );
+ 		ans = r;
+ 		}
+ 	else
+@@ -330,7 +330,7 @@
+ 	if( t < MACHEP )
+ 		goto done;
+ 
+-	if( fabs(pk) > big )
++	if( cephes_fabs(pk) > big )
+ 		{
+ 		pkm2 /= big;
+ 		pkm1 /= big;
+@@ -350,7 +350,7 @@
+  */
+ if( nflag > 0 )
+ 	{
+-	if( fabs(ans) < 0.125 )
++	if( cephes_fabs(ans) < 0.125 )
+ 		{
+ 		nflag = -1;
+ 		*n = *n - 1.0;
+@@ -379,8 +379,8 @@
+ 	pkm1 = pkm2;
+ 	r -= 2.0;
+ /*
+-	t = fabs(pkp1) + fabs(pk);
+-	if( (k > (kf + 2.5)) && (fabs(pkm1) < 0.25*t) )
++	t = cephes_fabs(pkp1) + cephes_fabs(pk);
++	if( (k > (kf + 2.5)) && (cephes_fabs(pkm1) < 0.25*t) )
+ 		{
+ 		k -= 1.0;
+ 		t = x*x;
+@@ -401,7 +401,7 @@
+ 
+ if( cancel )
+ 	{
+-	if( (kf >= 0.0) && (fabs(pk) > fabs(pkm1)) )
++	if( (kf >= 0.0) && (cephes_fabs(pk) > cephes_fabs(pkm1)) )
+ 		{
+ 		k += 1.0;
+ 		pkm2 = pk;
+@@ -441,19 +441,19 @@
+ 	y += u;
+ 	k += 1.0;
+ 	if( y != 0 )
+-		t = fabs( u/y );
++		t = cephes_fabs( u/y );
+ 	}
+ #if DEBUG
+ printf( "power series=%.5e ", y );
+ #endif
+-t = frexp( 0.5*x, &ex );
++t = cephes_frexp( 0.5*x, &ex );
+ ex = ex * n;
+ if(  (ex > -1023)
+   && (ex < 1023) 
+   && (n > 0.0)
+   && (n < (MAXGAM-1.0)) )
+ 	{
+-	t = pow( 0.5*x, n ) / gamma( n + 1.0 );
++	t = cephes_pow( 0.5*x, n ) / cephes_gamma( n + 1.0 );
+ #if DEBUG
+ printf( "pow(.5*x, %.4e)/gamma(n+1)=%.5e\n", n, t );
+ #endif
+@@ -462,21 +462,21 @@
+ else
+ 	{
+ #if DEBUG
+-	z = n * log(0.5*x);
++	z = n * cephes_log(0.5*x);
+ 	k = lgam( n+1.0 );
+ 	t = z - k;
+ 	printf( "log pow=%.5e, lgam(%.4e)=%.5e\n", z, n+1.0, k );
+ #else
+-	t = n * log(0.5*x) - lgam(n + 1.0);
++	t = n * cephes_log(0.5*x) - lgam(n + 1.0);
+ #endif
+ 	if( y < 0 )
+ 		{
+ 		sgngam = -sgngam;
+ 		y = -y;
+ 		}
+-	t += log(y);
++	t += cephes_log(y);
+ #if DEBUG
+-printf( "log y=%.5e\n", log(y) );
++printf( "log y=%.5e\n", cephes_log(y) );
+ #endif
+ 	if( t < -MAXLOG )
+ 		{
+@@ -487,7 +487,7 @@
+ 		mtherr( "Jv", OVERFLOW );
+ 		return( MAXNUM );
+ 		}
+-	y = sgngam * exp( t );
++	y = sgngam * cephes_exp( t );
+ 	}
+ return(y);
+ }
+@@ -529,7 +529,7 @@
+ 	j += 1.0;
+ 	u *= (m - k * k)/(j * z);
+ 	q += sign * u;
+-	t = fabs(u/p);
++	t = cephes_fabs(u/p);
+ 	if( t < conv )
+ 		{
+ 		conv = t;
+@@ -549,7 +549,7 @@
+ 
+ hank1:
+ u = x - (0.5*n + 0.25) * PI;
+-t = sqrt( 2.0/(PI*x) ) * ( pp * cos(u) - qq * sin(u) );
++t = cephes_sqrt( 2.0/(PI*x) ) * ( pp * cephes_cos(u) - qq * cephes_sin(u) );
+ #if DEBUG
+ printf( "hank: %.6e\n", t );
+ #endif
+@@ -652,9 +652,9 @@
+ /* Test for x very close to n.
+  * Use expansion for transition region if so.
+  */
+-cbn = cbrt(n);
++cbn = cephes_cbrt(n);
+ z = (x - n)/cbn;
+-if( fabs(z) <= 0.7 )
++if( cephes_fabs(z) <= 0.7 )
+ 	return( jnt(n,x) );
+ 
+ z = x/n;
+@@ -664,23 +664,23 @@
+ 
+ if( zz > 0.0 )
+ 	{
+-	sz = sqrt( zz );
+-	t = 1.5 * (log( (1.0+sz)/z ) - sz );	/* zeta ** 3/2		*/
+-	zeta = cbrt( t * t );
++	sz = cephes_sqrt( zz );
++	t = 1.5 * (cephes_log( (1.0+sz)/z ) - sz );	/* zeta ** 3/2		*/
++	zeta = cephes_cbrt( t * t );
+ 	nflg = 1;
+ 	}
+ else
+ 	{
+-	sz = sqrt(-zz);
+-	t = 1.5 * (sz - acos(1.0/z));
+-	zeta = -cbrt( t * t );
++	sz = cephes_sqrt(-zz);
++	t = 1.5 * (sz - cephes_acos(1.0/z));
++	zeta = -cephes_cbrt( t * t );
+ 	nflg = -1;
+ 	}
+-z32i = fabs(1.0/t);
+-sqz = cbrt(t);
++z32i = cephes_fabs(1.0/t);
++sqz = cephes_cbrt(t);
+ 
+ /* Airy function */
+-n23 = cbrt( n * n );
++n23 = cephes_cbrt( n * n );
+ t = n23 * zeta;
+ 
+ #if DEBUG
+@@ -748,7 +748,7 @@
+ 	if( doa )
+ 		{
+ 		ak *= np;
+-		t = fabs(ak);
++		t = cephes_fabs(ak);
+ 		if( t < akl )
+ 			{
+ 			akl = t;
+@@ -762,7 +762,7 @@
+ 		{
+ 		bk += lambda[tkp1] * zp * u[0];
+ 		bk *= -np/sqz;
+-		t = fabs(bk);
++		t = cephes_fabs(bk);
+ 		if( t < bkl )
+ 			{
+ 			bkl = t;
+@@ -781,9 +781,9 @@
+ 
+ /* normalizing factor ( 4*zeta/(1 - z**2) )**1/4	*/
+ t = 4.0 * zeta/zz;
+-t = sqrt( sqrt(t) );
++t = cephes_sqrt( cephes_sqrt(t) );
+ 
+-t *= ai*pp/cbrt(n)  +  aip*qq/(n23*n);
++t *= ai*pp/cephes_cbrt(n)  +  aip*qq/(n23*n);
+ return(t);
+ }
+ 
+@@ -833,9 +833,9 @@
+ double F[5], G[4];
+ int k;
+ 
+-cbn = cbrt(n);
++cbn = cephes_cbrt(n);
+ z = (x - n)/cbn;
+-cbtwo = cbrt( 2.0 );
++cbtwo = cephes_cbrt( 2.0 );
+ 
+ /* Airy function */
+ zz = -cbtwo * z;
+@@ -862,7 +862,7 @@
+ pp = 0.0;
+ qq = 0.0;
+ nk = 1.0;
+-n23 = cbrt( n * n );
++n23 = cephes_cbrt( n * n );
+ 
+ for( k=0; k<=4; k++ )
+ 	{
+@@ -879,6 +879,6 @@
+ 	nk /= n23;
+ 	}
+ 
+-fk = cbtwo * ai * pp/cbn  +  cbrt(4.0) * aip * qq/n;
++fk = cbtwo * ai * pp/cbn  +  cephes_cbrt(4.0) * aip * qq/n;
+ return(fk);
+ }
+--- Math-Cephes-0.36/libmd/struve.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/struve.c	2003-10-26 13:12:02.996766752 +0100
+@@ -37,21 +37,21 @@
+ #include "mconf.h"
+ #define DEBUG 0
+ #ifdef ANSIPROT
+-extern double gamma ( double );
+-extern double pow ( double, double );
+-extern double sqrt ( double );
+-extern double yn ( int, double );
++extern double cephes_gamma ( double );
++extern double cephes_pow ( double, double );
++extern double cephes_sqrt ( double );
++extern double cephes_yn ( int, double );
+ extern double jv ( double, double );
+-extern double fabs ( double );
+-extern double floor ( double );
+-extern double sin ( double );
+-extern double cos ( double );
++extern double cephes_fabs ( double );
++extern double cephes_floor ( double );
++extern double cephes_sin ( double );
++extern double cephes_cos ( double );
+ double yv ( double, double );
+ double onef2 (double, double, double, double, double * );
+ double threef0 (double, double, double, double, double * );
+ #else
+-double gamma(), pow(), sqrt(), yn(), yv(), jv(), fabs(), floor();
+-double sin(), cos();
++double cephes_gamma(), cephes_pow(), cephes_sqrt(), cephes_yn(), yv(), jv(), cephes_fabs(), cephes_floor();
++double cephes_sin(), cephes_cos();
+ double onef2(), threef0();
+ #endif
+ static double stop = 1.37e-17;
+@@ -89,11 +89,11 @@
+ 	bn += 1.0;
+ 	cn += 1.0;
+ 	n += 1.0;
+-	z = fabs( a0 );
++	z = cephes_fabs( a0 );
+ 	if( z > max )
+ 		max = z;
+ 	if( sum != 0 )
+-		t = fabs( a0 / sum );
++		t = cephes_fabs( a0 / sum );
+ 	else
+ 		t = z;
+ 	}
+@@ -101,7 +101,7 @@
+ 
+ done:
+ 
+-*err = fabs( MACHEP*max /sum );
++*err = cephes_fabs( MACHEP*max /sum );
+ 
+ #if DEBUG
+ 	printf(" onef2 cancellation error %.5E\n", *err );
+@@ -159,7 +159,7 @@
+ 	bn += 1.0;
+ 	cn += 1.0;
+ 	n += 1.0;
+-	z = fabs( a0 );
++	z = cephes_fabs( a0 );
+ 	if( z > max )
+ 		max = z;
+ 	if( z >= conv )
+@@ -171,7 +171,7 @@
+ 	conv = z;
+ 	sum += a0;
+ 	if( sum != 0 )
+-		t = fabs( a0 / sum );
++		t = cephes_fabs( a0 / sum );
+ 	else
+ 		t = z;
+ 	}
+@@ -179,12 +179,12 @@
+ 
+ done:
+ 
+-t = fabs( MACHEP*max/sum );
++t = cephes_fabs( MACHEP*max/sum );
+ #if DEBUG
+ 	printf(" threef0 cancellation error %.5E\n", t );
+ #endif
+ 
+-max = fabs( conv/sum );
++max = cephes_fabs( conv/sum );
+ if( max > t )
+ 	t = max;
+ #if DEBUG
+@@ -220,19 +220,19 @@
+ double y, ya, f, g, h, t;
+ double onef2err, threef0err;
+ 
+-f = floor(v);
++f = cephes_floor(v);
+ if( (v < 0) && ( v-f == 0.5 ) )
+ 	{
+ 	y = jv( -v, x );
+ 	f = 1.0 - f;
+-	g =  2.0 * floor(f/2.0);
++	g =  2.0 * cephes_floor(f/2.0);
+ 	if( g != f )
+ 		y = -y;
+ 	return(y);
+ 	}
+ t = 0.25*x*x;
+-f = fabs(x);
+-g = 1.5 * fabs(v);
++f = cephes_fabs(x);
++g = 1.5 * cephes_fabs(v);
+ if( (f > 30.0) && (f > g) )
+ 	{
+ 	onef2err = 1.0e38;
+@@ -253,18 +253,18 @@
+ 	ya = threef0( 1.0, 0.5, 0.5-v, -1.0/t, &threef0err );
+ 	}
+ 
+-f = sqrt( PI );
+-h = pow( 0.5*x, v-1.0 );
++f = cephes_sqrt( PI );
++h = cephes_pow( 0.5*x, v-1.0 );
+ 
+ if( onef2err <= threef0err )
+ 	{
+-	g = gamma( v + 1.5 );
++	g = cephes_gamma( v + 1.5 );
+ 	y = y * h * t / ( 0.5 * f * g );
+ 	return(y);
+ 	}
+ else
+ 	{
+-	g = gamma( v + 0.5 );
++	g = cephes_gamma( v + 0.5 );
+ 	ya = ya * h / ( f * g );
+ 	ya = ya + yv( v, x );
+ 	return(ya);
+@@ -283,15 +283,15 @@
+ double y, t;
+ int n;
+ 
+-y = floor( v );
++y = cephes_floor( v );
+ if( y == v )
+ 	{
+ 	n = v;
+-	y = yn( n, x );
++	y = cephes_yn( n, x );
+ 	return( y );
+ 	}
+ t = PI * v;
+-y = (cos(t) * jv( v, x ) - jv( -v, x ))/sin(t);
++y = (cephes_cos(t) * jv( v, x ) - jv( -v, x ))/cephes_sin(t);
+ return( y );
+ }
+ 
+--- Math-Cephes-0.36/libmd/zetac.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/zetac.c	2003-10-26 13:12:31.971361944 +0100
+@@ -494,16 +494,16 @@
+  * Riemann zeta function, minus one
+  */
+ #ifdef ANSIPROT
+-extern double sin ( double );
+-extern double floor ( double );
+-extern double gamma ( double );
+-extern double pow ( double, double );
+-extern double exp ( double );
++extern double cephes_sin ( double );
++extern double cephes_floor ( double );
++extern double cephes_gamma ( double );
++extern double cephes_pow ( double, double );
++extern double cephes_exp ( double );
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+ double zetac ( double );
+ #else
+-double sin(), floor(), gamma(), pow(), exp();
++double cephes_sin(), cephes_floor(), cephes_gamma(), cephes_pow(), cephes_exp();
+ double polevl(), p1evl(), zetac();
+ #endif
+ extern double MACHEP;
+@@ -527,7 +527,7 @@
+ 		}
+ 	s = 1.0 - x;
+ 	w = zetac( s );
+-	b = sin(0.5*PI*x) * pow(2.0*PI, x) * gamma(s) * (1.0 + w) / PI;
++	b = cephes_sin(0.5*PI*x) * cephes_pow(2.0*PI, x) * cephes_gamma(s) * (1.0 + w) / PI;
+ 	return(b - 1.0);
+ 	}
+ 
+@@ -535,7 +535,7 @@
+ 	return(0.0);	/* because first term is 2**-x */
+ 
+ /* Tabulated values for integer argument */
+-w = floor(x);
++w = cephes_floor(x);
+ if( w == x )
+ 	{
+ 	i = x;
+@@ -565,7 +565,7 @@
+ 
+ if( x <= 10.0 )
+ 	{
+-	b = pow( 2.0, x ) * (x - 1.0);
++	b = cephes_pow( 2.0, x ) * (x - 1.0);
+ 	w = 1.0/x;
+ 	s = (x * polevl( w, P, 8 )) / (b * p1evl( w, Q, 8 ));
+ 	return( s );
+@@ -573,9 +573,9 @@
+ 
+ if( x <= 50.0 )
+ 	{
+-	b = pow( 2.0, -x );
++	b = cephes_pow( 2.0, -x );
+ 	w = polevl( x, A, 10 ) / p1evl( x, B, 10 );
+-	w = exp(w) + b;
++	w = cephes_exp(w) + b;
+ 	return(w);
+ 	}
+ 
+@@ -588,12 +588,12 @@
+ do
+ 	{
+ 	a += 2.0;
+-	b = pow( a, -x );
++	b = cephes_pow( a, -x );
+ 	s += b;
+ 	}
+ while( b/s > MACHEP );
+ 
+-b = pow( 2.0, -x );
++b = cephes_pow( 2.0, -x );
+ s = (s + b)/(1.0-b);
+ return(s);
+ }
+--- Math-Cephes-0.36/libmd/Cephes_wrap.c.orig	2002-08-31 00:27:47.000000000 +0200
++++ Math-Cephes-0.36/libmd/Cephes_wrap.c	2003-10-26 14:46:37.465116440 +0100
+@@ -567,41 +567,41 @@
+ extern double LOGSQ2;
+ extern double THPIO4;
+ extern double TWOOPI;
+-extern double acosh(double);
++extern double cephes_acosh(double);
+ extern int airy(double,double *,double *,double *,double *);
+-extern double asin(double);
+-extern double acos(double);
+-extern double asinh(double);
+-extern double atan(double);
+-extern double atan2(double,double);
+-extern double atanh(double);
++extern double cephes_asin(double);
++extern double cephes_acos(double);
++extern double cephes_asinh(double);
++extern double cephes_atan(double);
++extern double cephes_atan2(double,double);
++extern double cephes_atanh(double);
+ extern double bdtrc(int,int,double);
+ extern double bdtr(int,int,double);
+ extern double bdtri(int,int,double);
+ extern double beta(double,double);
+ extern double lbeta(double,double);
+ extern double btdtr(double,double,double);
+-extern double cbrt(double);
++extern double cephes_cbrt(double);
+ extern double chbevl(double,void *,int);
+ extern double chdtrc(double,double);
+ extern double chdtr(double,double);
+ extern double chdtri(double,double);
+-extern void clog(cmplx *,cmplx *);
+-extern void cexp(cmplx *,cmplx *);
+-extern void csin(cmplx *,cmplx *);
+-extern void ccos(cmplx *,cmplx *);
+-extern void ctan(cmplx *,cmplx *);
++extern void cephes_clog(cmplx *,cmplx *);
++extern void cephes_cexp(cmplx *,cmplx *);
++extern void cephes_csin(cmplx *,cmplx *);
++extern void cephes_ccos(cmplx *,cmplx *);
++extern void cephes_ctan(cmplx *,cmplx *);
+ extern void ccot(cmplx *,cmplx *);
+-extern void casin(cmplx *,cmplx *);
+-extern void cacos(cmplx *,cmplx *);
+-extern void catan(cmplx *,cmplx *);
+-extern void csinh(cmplx *,cmplx *);
+-extern void casinh(cmplx *,cmplx *);
+-extern void ccosh(cmplx *,cmplx *);
+-extern void cacosh(cmplx *,cmplx *);
+-extern void ctanh(cmplx *,cmplx *);
+-extern void catanh(cmplx *,cmplx *);
+-extern void cpow(cmplx *,cmplx *,cmplx *);
++extern void cephes_casin(cmplx *,cmplx *);
++extern void cephes_cacos(cmplx *,cmplx *);
++extern void cephes_catan(cmplx *,cmplx *);
++extern void cephes_csinh(cmplx *,cmplx *);
++extern void cephes_casinh(cmplx *,cmplx *);
++extern void cephes_ccosh(cmplx *,cmplx *);
++extern void cephes_cacosh(cmplx *,cmplx *);
++extern void cephes_ctanh(cmplx *,cmplx *);
++extern void cephes_catanh(cmplx *,cmplx *);
++extern void cephes_cpow(cmplx *,cmplx *,cmplx *);
+ extern void radd(fract *,fract *,fract *);
+ extern void rsub(fract *,fract *,fract *);
+ extern void rmul(fract *,fract *,fract *);
+@@ -613,32 +613,32 @@
+ extern void cdiv(cmplx *,cmplx *,cmplx *);
+ extern void cmov(void *,void *);
+ extern void cneg(cmplx *);
+-extern double cabs(cmplx *);
+-extern void csqrt(cmplx *,cmplx *);
+-extern double hypot(double,double);
+-extern double cosh(double);
++extern double cephes_cabs(cmplx *);
++extern void cephes_csqrt(cmplx *,cmplx *);
++extern double cephes_hypot(double,double);
++extern double cephes_cosh(double);
+ extern double dawsn(double);
+ extern double ellie(double,double);
+ extern double ellik(double,double);
+ extern double ellpe(double);
+ extern int ellpj(double,double,double *,double *,double *,double *);
+ extern double ellpk(double);
+-extern double exp(double);
+-extern double exp10(double);
+-extern double exp2(double);
++extern double cephes_exp(double);
++extern double cephes_exp10(double);
++extern double cephes_exp2(double);
+ extern double expn(int,double);
+ extern double ei(double);
+-extern double fabs(double);
++extern double cephes_fabs(double);
+ extern double fac(int);
+ extern double fdtrc(int,int,double);
+ extern double fdtr(int,int,double);
+ extern double fdtri(int,int,double);
+-extern double ceil(double);
+-extern double floor(double);
+-extern double frexp(double,int *);
+-extern double ldexp(double,int);
++extern double cephes_ceil(double);
++extern double cephes_floor(double);
++extern double cephes_frexp(double,int *);
++extern double cephes_ldexp(double,int);
+ extern int fresnl(double,double *,double *);
+-extern double gamma(double);
++extern double cephes_gamma(double);
+ extern double lgam(double);
+ extern double gdtr(double,double,double);
+ extern double gdtrc(double,double,double);
+@@ -655,20 +655,20 @@
+ extern double incbet(double,double,double);
+ extern double incbi(double,double,double);
+ extern double iv(double,double);
+-extern double j0(double);
+-extern double y0(double);
+-extern double j1(double);
+-extern double y1(double);
+-extern double jn(int,double);
++extern double cephes_j0(double);
++extern double cephes_y0(double);
++extern double cephes_j1(double);
++extern double cephes_y1(double);
++extern double cephes_jn(int,double);
+ extern double jv(double,double);
+ extern double k0(double);
+ extern double k0e(double);
+ extern double k1(double);
+ extern double k1e(double);
+ extern double kn(int,double);
+-extern double log(double);
+-extern double log10(double);
+-extern double log2(double);
++extern double cephes_log(double);
++extern double cephes_log10(double);
++extern double cephes_log2(double);
+ extern long lrand(void);
+ extern long lsqrt(long);
+ extern int mtherr(char *,int);
+@@ -678,41 +678,41 @@
+ extern double nbdtr(int,int,double);
+ extern double nbdtri(int,int,double);
+ extern double ndtr(double);
+-extern double erfc(double);
+-extern double erf(double);
++extern double cephes_erfc(double);
++extern double cephes_erf(double);
+ extern double ndtri(double);
+ extern double pdtrc(int,double);
+ extern double pdtr(int,double);
+ extern double pdtri(int,double);
+-extern double pow(double,double);
++extern double cephes_pow(double,double);
+ extern double powi(double,int);
+ extern double psi(double);
+ extern double rgamma(double);
+-extern double round(double);
++extern double cephes_round(double);
+ extern int shichi(double,double *,double *);
+ extern int sici(double,double *,double *);
+-extern double sin(double);
+-extern double cos(double);
++extern double cephes_sin(double);
++extern double cephes_cos(double);
+ extern double radian(double,double,double);
+ extern double sindg(double);
+ extern double cosdg(double);
+-extern double sinh(double);
++extern double cephes_sinh(double);
+ extern double spence(double);
+-extern double sqrt(double);
++extern double cephes_sqrt(double);
+ extern double stdtr(int,double);
+ extern double stdtri(int,double);
+ extern double onef2(double,double,double,double,double *);
+ extern double threef0(double,double,double,double,double *);
+ extern double struve(double,double);
+-extern double tan(double);
++extern double cephes_tan(double);
+ extern double cot(double);
+ extern double tandg(double);
+ extern double cotdg(double);
+-extern double tanh(double);
+-extern double log1p(double);
+-extern double expm1(double);
++extern double cephes_tanh(double);
++extern double cephes_log1p(double);
++extern double cephes_expm1(double);
+ extern double cosm1(double);
+-extern double yn(int,double);
++extern double cephes_yn(int,double);
+ extern double yv(double,double);
+ extern double zeta(double,double);
+ extern double zetac(double);
+@@ -1307,7 +1307,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)acosh(arg1);
++    result = (double)cephes_acosh(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -1389,7 +1389,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)asin(arg1);
++    result = (double)cephes_asin(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -1408,7 +1408,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)acos(arg1);
++    result = (double)cephes_acos(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -1427,7 +1427,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)asinh(arg1);
++    result = (double)cephes_asinh(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -1446,7 +1446,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)atan(arg1);
++    result = (double)cephes_atan(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -1468,7 +1468,7 @@
+     
+     arg2 = (double) SvNV(ST(1));
+     
+-    result = (double)atan2(arg1,arg2);
++    result = (double)cephes_atan2(arg1,arg2);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -1487,7 +1487,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)atanh(arg1);
++    result = (double)cephes_atanh(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -1644,7 +1644,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)cbrt(arg1);
++    result = (double)cephes_cbrt(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -1764,7 +1764,7 @@
+             croak("Type error in argument 2 of clog. Expected %s", SWIGTYPE_p_cmplx->name);
+         }
+     }
+-    clog(arg1,arg2);
++    cephes_clog(arg1,arg2);
+     
+     
+     XSRETURN(argvi);
+@@ -1790,7 +1790,7 @@
+             croak("Type error in argument 2 of cexp. Expected %s", SWIGTYPE_p_cmplx->name);
+         }
+     }
+-    cexp(arg1,arg2);
++    cephes_cexp(arg1,arg2);
+     
+     
+     XSRETURN(argvi);
+@@ -1816,7 +1816,7 @@
+             croak("Type error in argument 2 of csin. Expected %s", SWIGTYPE_p_cmplx->name);
+         }
+     }
+-    csin(arg1,arg2);
++    cephes_csin(arg1,arg2);
+     
+     
+     XSRETURN(argvi);
+@@ -1842,7 +1842,7 @@
+             croak("Type error in argument 2 of ccos. Expected %s", SWIGTYPE_p_cmplx->name);
+         }
+     }
+-    ccos(arg1,arg2);
++    cephes_ccos(arg1,arg2);
+     
+     
+     XSRETURN(argvi);
+@@ -1868,7 +1868,7 @@
+             croak("Type error in argument 2 of ctan. Expected %s", SWIGTYPE_p_cmplx->name);
+         }
+     }
+-    ctan(arg1,arg2);
++    cephes_ctan(arg1,arg2);
+     
+     
+     XSRETURN(argvi);
+@@ -1920,7 +1920,7 @@
+             croak("Type error in argument 2 of casin. Expected %s", SWIGTYPE_p_cmplx->name);
+         }
+     }
+-    casin(arg1,arg2);
++    cephes_casin(arg1,arg2);
+     
+     
+     XSRETURN(argvi);
+@@ -1946,7 +1946,7 @@
+             croak("Type error in argument 2 of cacos. Expected %s", SWIGTYPE_p_cmplx->name);
+         }
+     }
+-    cacos(arg1,arg2);
++    cephes_cacos(arg1,arg2);
+     
+     
+     XSRETURN(argvi);
+@@ -1972,7 +1972,7 @@
+             croak("Type error in argument 2 of catan. Expected %s", SWIGTYPE_p_cmplx->name);
+         }
+     }
+-    catan(arg1,arg2);
++    cephes_catan(arg1,arg2);
+     
+     
+     XSRETURN(argvi);
+@@ -1998,7 +1998,7 @@
+             croak("Type error in argument 2 of csinh. Expected %s", SWIGTYPE_p_cmplx->name);
+         }
+     }
+-    csinh(arg1,arg2);
++    cephes_csinh(arg1,arg2);
+     
+     
+     XSRETURN(argvi);
+@@ -2024,7 +2024,7 @@
+             croak("Type error in argument 2 of casinh. Expected %s", SWIGTYPE_p_cmplx->name);
+         }
+     }
+-    casinh(arg1,arg2);
++    cephes_casinh(arg1,arg2);
+     
+     
+     XSRETURN(argvi);
+@@ -2050,7 +2050,7 @@
+             croak("Type error in argument 2 of ccosh. Expected %s", SWIGTYPE_p_cmplx->name);
+         }
+     }
+-    ccosh(arg1,arg2);
++    cephes_ccosh(arg1,arg2);
+     
+     
+     XSRETURN(argvi);
+@@ -2076,7 +2076,7 @@
+             croak("Type error in argument 2 of cacosh. Expected %s", SWIGTYPE_p_cmplx->name);
+         }
+     }
+-    cacosh(arg1,arg2);
++    cephes_cacosh(arg1,arg2);
+     
+     
+     XSRETURN(argvi);
+@@ -2102,7 +2102,7 @@
+             croak("Type error in argument 2 of ctanh. Expected %s", SWIGTYPE_p_cmplx->name);
+         }
+     }
+-    ctanh(arg1,arg2);
++    cephes_ctanh(arg1,arg2);
+     
+     
+     XSRETURN(argvi);
+@@ -2128,7 +2128,7 @@
+             croak("Type error in argument 2 of catanh. Expected %s", SWIGTYPE_p_cmplx->name);
+         }
+     }
+-    catanh(arg1,arg2);
++    cephes_catanh(arg1,arg2);
+     
+     
+     XSRETURN(argvi);
+@@ -2160,7 +2160,7 @@
+             croak("Type error in argument 3 of cpow. Expected %s", SWIGTYPE_p_cmplx->name);
+         }
+     }
+-    cpow(arg1,arg2,arg3);
++    cephes_cpow(arg1,arg2,arg3);
+     
+     
+     XSRETURN(argvi);
+@@ -2530,7 +2530,7 @@
+             croak("Type error in argument 1 of cabs. Expected %s", SWIGTYPE_p_cmplx->name);
+         }
+     }
+-    result = (double)cabs(arg1);
++    result = (double)cephes_cabs(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -2557,7 +2557,7 @@
+             croak("Type error in argument 2 of csqrt. Expected %s", SWIGTYPE_p_cmplx->name);
+         }
+     }
+-    csqrt(arg1,arg2);
++    cephes_csqrt(arg1,arg2);
+     
+     
+     XSRETURN(argvi);
+@@ -2578,7 +2578,7 @@
+     
+     arg2 = (double) SvNV(ST(1));
+     
+-    result = (double)hypot(arg1,arg2);
++    result = (double)cephes_hypot(arg1,arg2);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -2597,7 +2597,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)cosh(arg1);
++    result = (double)cephes_cosh(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -2783,7 +2783,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)exp(arg1);
++    result = (double)cephes_exp(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -2802,7 +2802,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)exp10(arg1);
++    result = (double)cephes_exp10(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -2821,7 +2821,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)exp2(arg1);
++    result = (double)cephes_exp2(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -2880,7 +2880,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)fabs(arg1);
++    result = (double)cephes_fabs(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -2986,7 +2986,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)ceil(arg1);
++    result = (double)cephes_ceil(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -3005,7 +3005,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)floor(arg1);
++    result = (double)cephes_floor(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -3027,7 +3027,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)frexp(arg1,arg2);
++    result = (double)cephes_frexp(arg1,arg2);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -3056,7 +3056,7 @@
+     arg1 = (double) SvNV(ST(0));
+     
+     arg2 = (int) SvIV(ST(1));
+-    result = (double)ldexp(arg1,arg2);
++    result = (double)cephes_ldexp(arg1,arg2);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -3116,7 +3116,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)gamma(arg1);
++    result = (double)cephes_gamma(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -3509,7 +3509,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)j0(arg1);
++    result = (double)cephes_j0(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -3528,7 +3528,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)y0(arg1);
++    result = (double)cephes_y0(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -3547,7 +3547,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)j1(arg1);
++    result = (double)cephes_j1(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -3566,7 +3566,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)y1(arg1);
++    result = (double)cephes_y1(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -3587,7 +3587,7 @@
+     arg1 = (int) SvIV(ST(0));
+     arg2 = (double) SvNV(ST(1));
+     
+-    result = (double)jn(arg1,arg2);
++    result = (double)cephes_jn(arg1,arg2);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -3725,7 +3725,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)log(arg1);
++    result = (double)cephes_log(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -3744,7 +3744,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)log10(arg1);
++    result = (double)cephes_log10(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -3763,7 +3763,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)log2(arg1);
++    result = (double)cephes_log2(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -3979,7 +3979,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)erfc(arg1);
++    result = (double)cephes_erfc(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -3998,7 +3998,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)erf(arg1);
++    result = (double)cephes_erf(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -4102,7 +4102,7 @@
+     
+     arg2 = (double) SvNV(ST(1));
+     
+-    result = (double)pow(arg1,arg2);
++    result = (double)cephes_pow(arg1,arg2);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -4180,7 +4180,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)round(arg1);
++    result = (double)cephes_round(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -4281,7 +4281,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)sin(arg1);
++    result = (double)cephes_sin(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -4300,7 +4300,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)cos(arg1);
++    result = (double)cephes_cos(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -4382,7 +4382,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)sinh(arg1);
++    result = (double)cephes_sinh(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -4420,7 +4420,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)sqrt(arg1);
++    result = (double)cephes_sqrt(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -4581,7 +4581,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)tan(arg1);
++    result = (double)cephes_tan(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -4657,7 +4657,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)tanh(arg1);
++    result = (double)cephes_tanh(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -4676,7 +4676,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)log1p(arg1);
++    result = (double)cephes_log1p(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -4695,7 +4695,7 @@
+     }
+     arg1 = (double) SvNV(ST(0));
+     
+-    result = (double)expm1(arg1);
++    result = (double)cephes_expm1(arg1);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+@@ -4735,7 +4735,7 @@
+     arg1 = (int) SvIV(ST(0));
+     arg2 = (double) SvNV(ST(1));
+     
+-    result = (double)yn(arg1,arg2);
++    result = (double)cephes_yn(arg1,arg2);
+     
+     ST(argvi) = sv_newmortal();
+     sv_setnv(ST(argvi++), (double) result);
+--- Math-Cephes-0.36/libmd/clog.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/clog.c	2003-10-26 13:14:27.057866136 +0100
+@@ -47,54 +47,54 @@
+ static double redupi ( double x );
+ static double ctans ( cmplx *z );
+ /* These are supposed to be in some standard place. */
+-double fabs (double);
+-double sqrt (double);
+-double pow (double, double);
+-double log (double);
+-double exp (double);
+-double atan2 (double, double);
+-double cosh (double);
+-double sinh (double);
+-double asin (double);
+-double sin (double);
+-double cos (double);
+-double cabs (cmplx *);
++double cephes_fabs (double);
++double cephes_sqrt (double);
++double cephes_pow (double, double);
++double cephes_log (double);
++double cephes_exp (double);
++double cephes_atan2 (double, double);
++double cephes_cosh (double);
++double cephes_sinh (double);
++double cephes_asin (double);
++double cephes_sin (double);
++double cephes_cos (double);
++double cephes_cabs (cmplx *);
+ void cadd ( cmplx *, cmplx *, cmplx * );
+ void cmul ( cmplx *, cmplx *, cmplx * );
+-void csqrt ( cmplx *, cmplx * );
++void cephes_csqrt ( cmplx *, cmplx * );
+ static void cchsh ( double, double *, double * );
+ static double redupi ( double );
+ static double ctans ( cmplx * );
+-void clog ( cmplx *, cmplx * );
+-void casin ( cmplx *, cmplx * );
+-void cacos ( cmplx *, cmplx * );
+-void catan ( cmplx *, cmplx * );
++void cephes_clog ( cmplx *, cmplx * );
++void cephes_casin ( cmplx *, cmplx * );
++void cephes_cacos ( cmplx *, cmplx * );
++void cephes_catan ( cmplx *, cmplx * );
+ #else
+ static void cchsh();
+ static double redupi();
+ static double ctans();
+-double cabs(), fabs(), sqrt(), pow();
+-double log(), exp(), atan2(), cosh(), sinh();
+-double asin(), sin(), cos();
+-void cadd(), cmul(), csqrt();
+-void clog(), casin(), cacos(), catan();
++double cephes_cabs(), cephes_fabs(), cephes_sqrt(), cephes_pow();
++double cephes_log(), cephes_exp(), cephes_atan2(), cephes_cosh(), cephes_sinh();
++double cephes_asin(), cephes_sin(), cephes_cos();
++void cadd(), cmul(), cephes_csqrt();
++void cephes_clog(), cephes_casin(), cephes_cacos(), cephes_catan();
+ #endif
+ 
+ 
+ extern double MAXNUM, MACHEP, PI, PIO2;
+ 
+-void clog( z, w )
++void cephes_clog( z, w )
+ register cmplx *z, *w;
+ {
+ double p, rr;
+ 
+ /*rr = sqrt( z->r * z->r  +  z->i * z->i );*/
+-rr = cabs(z);
+-p = log(rr);
++rr = cephes_cabs(z);
++p = cephes_log(rr);
+ #if ANSIC
+-rr = atan2( z->i, z->r );
++rr = cephes_atan2( z->i, z->r );
+ #else
+-rr = atan2( z->r, z->i );
++rr = cephes_atan2( z->r, z->i );
+ if( rr > PI )
+ 	rr -= PI + PI;
+ #endif
+@@ -139,14 +139,14 @@
+  *
+  */
+ 
+-void cexp( z, w )
++void cephes_cexp( z, w )
+ register cmplx *z, *w;
+ {
+ double r;
+ 
+-r = exp( z->r );
+-w->r = r * cos( z->i );
+-w->i = r * sin( z->i );
++r = cephes_exp( z->r );
++w->r = r * cephes_cos( z->i );
++w->i = r * cephes_sin( z->i );
+ }
+ /*							csin()
+  *
+@@ -184,14 +184,14 @@
+  *
+  */
+ 
+-void csin( z, w )
++void cephes_csin( z, w )
+ register cmplx *z, *w;
+ {
+ double ch, sh;
+ 
+ cchsh( z->i, &ch, &sh );
+-w->r = sin( z->r ) * ch;
+-w->i = cos( z->r ) * sh;
++w->r = cephes_sin( z->r ) * ch;
++w->i = cephes_cos( z->r ) * sh;
+ }
+ 
+ 
+@@ -203,14 +203,14 @@
+ {
+ double e, ei;
+ 
+-if( fabs(x) <= 0.5 )
++if( cephes_fabs(x) <= 0.5 )
+ 	{
+-	*c = cosh(x);
+-	*s = sinh(x);
++	*c = cephes_cosh(x);
++	*s = cephes_sinh(x);
+ 	}
+ else
+ 	{
+-	e = exp(x);
++	e = cephes_exp(x);
+ 	ei = 0.5/e;
+ 	e = 0.5 * e;
+ 	*s = e - ei;
+@@ -252,14 +252,14 @@
+  *    IEEE      -10,+10     30000       3.8e-16     1.0e-16
+  */
+ 
+-void ccos( z, w )
++void cephes_ccos( z, w )
+ register cmplx *z, *w;
+ {
+ double ch, sh;
+ 
+ cchsh( z->i, &ch, &sh );
+-w->r = cos( z->r ) * ch;
+-w->i = -sin( z->r ) * sh;
++w->r = cephes_cos( z->r ) * ch;
++w->i = -cephes_sin( z->r ) * sh;
+ }
+ /*							ctan()
+  *
+@@ -301,14 +301,14 @@
+  * Also tested by ctan * ccot = 1 and catan(ctan(z))  =  z.
+  */
+ 
+-void ctan( z, w )
++void cephes_ctan( z, w )
+ register cmplx *z, *w;
+ {
+ double d;
+ 
+-d = cos( 2.0 * z->r ) + cosh( 2.0 * z->i );
++d = cephes_cos( 2.0 * z->r ) + cephes_cosh( 2.0 * z->i );
+ 
+-if( fabs(d) < 0.25 )
++if( cephes_fabs(d) < 0.25 )
+ 	d = ctans(z);
+ 
+ if( d == 0.0 )
+@@ -319,8 +319,8 @@
+ 	return;
+ 	}
+ 
+-w->r = sin( 2.0 * z->r ) / d;
+-w->i = sinh( 2.0 * z->i ) / d;
++w->r = cephes_sin( 2.0 * z->r ) / d;
++w->i = cephes_sinh( 2.0 * z->i ) / d;
+ }
+ /*							ccot()
+  *
+@@ -367,9 +367,9 @@
+ {
+ double d;
+ 
+-d = cosh(2.0 * z->i) - cos(2.0 * z->r);
++d = cephes_cosh(2.0 * z->i) - cephes_cos(2.0 * z->r);
+ 
+-if( fabs(d) < 0.25 )
++if( cephes_fabs(d) < 0.25 )
+ 	d = ctans(z);
+ 
+ if( d == 0.0 )
+@@ -380,8 +380,8 @@
+ 	return;
+ 	}
+ 
+-w->r = sin( 2.0 * z->r ) / d;
+-w->i = -sinh( 2.0 * z->i ) / d;
++w->r = cephes_sin( 2.0 * z->r ) / d;
++w->i = -cephes_sinh( 2.0 * z->i ) / d;
+ }
+ 
+ /* Program to subtract nearest integer multiple of PI */
+@@ -451,8 +451,8 @@
+ double f, x, x2, y, y2, rn, t;
+ double d;
+ 
+-x = fabs( 2.0 * z->r );
+-y = fabs( 2.0 * z->i );
++x = cephes_fabs( 2.0 * z->r );
++y = cephes_fabs( 2.0 * z->i );
+ 
+ x = redupi(x);
+ 
+@@ -485,7 +485,7 @@
+ 	t /= f;
+ 	d += t;
+ 	}
+-while( fabs(t/d) > MACHEP );
++while( cephes_fabs(t/d) > MACHEP );
+ return(d);
+ }
+ /*							casin()
+@@ -521,7 +521,7 @@
+  * Also tested by csin(casin(z)) = z.
+  */
+ 
+-void casin( z, w )
++void cephes_casin( z, w )
+ cmplx *z, *w;
+ {
+ static cmplx ca, ct, zz, z2;
+@@ -532,7 +532,7 @@
+ 
+ if( y == 0.0 )
+ 	{
+-	if( fabs(x) > 1.0 )
++	if( cephes_fabs(x) > 1.0 )
+ 		{
+ 		w->r = PIO2;
+ 		w->i = 0.0;
+@@ -540,7 +540,7 @@
+ 		}
+ 	else
+ 		{
+-		w->r = asin(x);
++		w->r = cephes_asin(x);
+ 		w->i = 0.0;
+ 		}
+ 	return;
+@@ -577,7 +577,7 @@
+ 	ct.i *= b;
+ 	sum.r += ct.r;
+ 	sum.i += ct.i;
+-	b = fabs(ct.r) + fabs(ct.i);
++	b = cephes_fabs(ct.r) + cephes_fabs(ct.i);
+ 	}
+ while( b > MACHEP );
+ w->r = sum.r;
+@@ -600,10 +600,10 @@
+ 
+ zz.r = 1.0 - zz.r;
+ zz.i = -zz.i;
+-csqrt( &zz, &z2 );
++cephes_csqrt( &zz, &z2 );
+ 
+ cadd( &z2, &ct, &zz );
+-clog( &zz, &zz );
++cephes_clog( &zz, &zz );
+ w->r = zz.i;	/* mult by 1/i = -i */
+ w->i = -zz.r;
+ return;
+@@ -639,11 +639,11 @@
+  *    IEEE      -10,+10     30000      1.8e-14      2.2e-15
+  */
+ 
+-void cacos( z, w )
++void cephes_cacos( z, w )
+ cmplx *z, *w;
+ {
+ 
+-casin( z, w );
++cephes_casin( z, w );
+ w->r = PIO2  -  w->r;
+ w->i = -w->i;
+ }
+@@ -694,7 +694,7 @@
+  * 2.9e-17.  See also clog().
+  */
+ 
+-void catan( z, w )
++void cephes_catan( z, w )
+ cmplx *z, *w;
+ {
+ double a, t, x, x2, y;
+@@ -711,9 +711,9 @@
+ 	goto ovrf;
+ 
+ #if ANSIC
+-t = atan2( 2.0 * x, a )/2.0;
++t = cephes_atan2( 2.0 * x, a )/2.0;
+ #else
+-t = atan2( a, 2.0 * x )/2.0;
++t = cephes_atan2( a, 2.0 * x )/2.0;
+ #endif
+ w->r = redupi( t );
+ 
+@@ -724,7 +724,7 @@
+ 
+ t = y + 1.0;
+ a = (x2 + (t * t))/a;
+-w->i = log(a)/4.0;
++w->i = cephes_log(a)/4.0;
+ return;
+ 
+ ovrf:
+@@ -762,15 +762,15 @@
+  */
+ 
+ void
+-csinh (z, w)
++cephes_csinh (z, w)
+      cmplx *z, *w;
+ {
+   double x, y;
+ 
+   x = z->r;
+   y = z->i;
+-  w->r = sinh (x) * cos (y);
+-  w->i = cosh (x) * sin (y);
++  w->r = cephes_sinh (x) * cephes_cos (y);
++  w->i = cephes_cosh (x) * cephes_sin (y);
+ }
+ 
+ 
+@@ -802,7 +802,7 @@
+  */
+ 
+ void
+-casinh (z, w)
++cephes_casinh (z, w)
+      cmplx *z, *w;
+ {
+   cmplx u;
+@@ -810,7 +810,7 @@
+   u.r = 0.0;
+   u.i = 1.0;
+   cmul( z, &u, &u );
+-  casin( &u, w );
++  cephes_casin( &u, w );
+   u.r = 0.0;
+   u.i = -1.0;
+   cmul( &u, w, w );
+@@ -844,15 +844,15 @@
+  */
+ 
+ void
+-ccosh (z, w)
++cephes_ccosh (z, w)
+      cmplx *z, *w;
+ {
+   double x, y;
+ 
+   x = z->r;
+   y = z->i;
+-  w->r = cosh (x) * cos (y);
+-  w->i = sinh (x) * sin (y);
++  w->r = cephes_cosh (x) * cephes_cos (y);
++  w->i = cephes_sinh (x) * cephes_sin (y);
+ }
+ 
+ 
+@@ -884,12 +884,12 @@
+  */
+ 
+ void
+-cacosh (z, w)
++cephes_cacosh (z, w)
+      cmplx *z, *w;
+ {
+   cmplx u;
+ 
+-  cacos( z, w );
++  cephes_cacos( z, w );
+   u.r = 0.0;
+   u.i = 1.0;
+   cmul( &u, w, w );
+@@ -926,16 +926,16 @@
+ /* 5.253E-02,1.550E+00 1.643E+01,6.553E+00 1.729E-14  21355  */
+ 
+ void
+-ctanh (z, w)
++cephes_ctanh (z, w)
+      cmplx *z, *w;
+ {
+   double x, y, d;
+ 
+   x = z->r;
+   y = z->i;
+-  d = cosh (2.0 * x) + cos (2.0 * y);
+-  w->r = sinh (2.0 * x) / d;
+-  w->i = sin (2.0 * y) / d;
++  d = cephes_cosh (2.0 * x) + cephes_cos (2.0 * y);
++  w->r = cephes_sinh (2.0 * x) / d;
++  w->i = cephes_sin (2.0 * y) / d;
+   return;
+ }
+ 
+@@ -968,7 +968,7 @@
+  */
+ 
+ void
+-catanh (z, w)
++cephes_catanh (z, w)
+      cmplx *z, *w;
+ {
+   cmplx u;
+@@ -976,7 +976,7 @@
+   u.r = 0.0;
+   u.i = 1.0;
+   cmul (z, &u, &u);  /* i z */
+-  catan (&u, w);
++  cephes_catan (&u, w);
+   u.r = 0.0;
+   u.i = -1.0;
+   cmul (&u, w, w);  /* -i catan iz */
+@@ -1015,29 +1015,29 @@
+ 
+ 
+ void
+-cpow (a, z, w)
++cephes_cpow (a, z, w)
+      cmplx *a, *z, *w;
+ {
+   double x, y, r, theta, absa, arga;
+ 
+   x = z->r;
+   y = z->i;
+-  absa = cabs (a);
++  absa = cephes_cabs (a);
+   if (absa == 0.0)
+     {
+       w->r = 0.0;
+       w->i = 0.0;
+       return;
+     }
+-  arga = atan2 (a->i, a->r);
+-  r = pow (absa, x);
++  arga = cephes_atan2 (a->i, a->r);
++  r = cephes_pow (absa, x);
+   theta = x * arga;
+   if (y != 0.0)
+     {
+-      r = r * exp (-y * arga);
+-      theta = theta + y * log (absa);
++      r = r * cephes_exp (-y * arga);
++      theta = theta + y * cephes_log (absa);
+     }
+-  w->r = r * cos (theta);
+-  w->i = r * sin (theta);
++  w->r = r * cephes_cos (theta);
++  w->i = r * cephes_sin (theta);
+   return;
+ }
+--- Math-Cephes-0.36/libmd/sqrt.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/sqrt.c	2003-10-26 12:20:56.505944216 +0100
+@@ -47,14 +47,14 @@
+ 
+ #include "mconf.h"
+ #ifdef ANSIPROT
+-extern double frexp ( double, int * );
+-extern double ldexp ( double, int );
++extern double cephes_frexp ( double, int * );
++extern double cephes_ldexp ( double, int );
+ #else
+-double frexp(), ldexp();
++double cephes_frexp(), cephes_ldexp();
+ #endif
+ extern double SQRT2;  /*  SQRT2 = 1.41421356237309504880 */
+ 
+-double sqrt(x)
++double cephes_sqrt(x)
+ double x;
+ {
+ int e;
+@@ -72,7 +72,7 @@
+ w = x;
+ /* separate exponent and significand */
+ #ifdef UNK
+-z = frexp( x, &e );
++z = cephes_frexp( x, &e );
+ #endif
+ #ifdef DEC
+ q = (short *)&x;
+@@ -86,7 +86,7 @@
+  * handle denormal numbers properly.
+  */
+ #ifdef IBMPC
+-z = frexp( x, &e );
++z = cephes_frexp( x, &e );
+ q = (short *)&x;
+ q += 3;
+ /*
+@@ -97,7 +97,7 @@
+ */
+ #endif
+ #ifdef MIEEE
+-z = frexp( x, &e );
++z = cephes_frexp( x, &e );
+ q = (short *)&x;
+ /*
+ e = ((*q >> 4) & 0x0fff) - 0x3fe;
+@@ -118,21 +118,21 @@
+ 
+ /* re-insert exponent */
+ #ifdef UNK
+-x = ldexp( x, (e >> 1) );
++x = cephes_ldexp( x, (e >> 1) );
+ #endif
+ #ifdef DEC
+ *q += ((e >> 1) & 0377) << 7;
+ *q &= 077777;
+ #endif
+ #ifdef IBMPC
+-x = ldexp( x, (e >> 1) );
++x = cephes_ldexp( x, (e >> 1) );
+ /*
+ *q += ((e >>1) & 0x7ff) << 4;
+ *q &= 077777;
+ */
+ #endif
+ #ifdef MIEEE
+-x = ldexp( x, (e >> 1) );
++x = cephes_ldexp( x, (e >> 1) );
+ /*
+ *q += ((e >>1) & 0x7ff) << 4;
+ *q &= 077777;
+--- Math-Cephes-0.36/libmd/acosh.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/acosh.c	2003-10-26 12:35:10.936051096 +0100
+@@ -127,14 +127,14 @@
+ #ifdef ANSIPROT
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+-extern double log ( double );
+-extern double sqrt ( double );
++extern double cephes_log ( double );
++extern double cephes_sqrt ( double );
+ #else
+-double log(), sqrt(), polevl(), p1evl();
++double cephes_log(), cephes_sqrt(), polevl(), p1evl();
+ #endif
+ extern double LOGE2, INFINITY, NAN;
+ 
+-double acosh(x)
++double cephes_acosh(x)
+ double x;
+ {
+ double a, z;
+@@ -151,17 +151,17 @@
+ 	if( x == INFINITY )
+ 		return( INFINITY );
+ #endif
+-	return( log(x) + LOGE2 );
++	return( cephes_log(x) + LOGE2 );
+ 	}
+ 
+ z = x - 1.0;
+ 
+ if( z < 0.5 )
+ 	{
+-	a = sqrt(z) * (polevl(z, P, 4) / p1evl(z, Q, 5) );
++	a = cephes_sqrt(z) * (polevl(z, P, 4) / p1evl(z, Q, 5) );
+ 	return( a );
+ 	}
+ 
+-a = sqrt( z*(x+1.0) );
+-return( log(x + a) );
++a = cephes_sqrt( z*(x+1.0) );
++return( cephes_log(x + a) );
+ }
+--- Math-Cephes-0.36/libmd/airy.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/airy.c	2003-10-26 13:05:42.180659600 +0100
+@@ -823,16 +823,16 @@
+ #endif
+ 
+ #ifdef ANSIPROT
+-extern double fabs ( double );
+-extern double exp ( double );
+-extern double sqrt ( double );
++extern double cephes_fabs ( double );
++extern double cephes_exp ( double );
++extern double cephes_sqrt ( double );
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+-extern double sin ( double );
+-extern double cos ( double );
++extern double cephes_sin ( double );
++extern double cephes_cos ( double );
+ #else
+-double fabs(), exp(), sqrt();
+-double polevl(), p1evl(), sin(), cos();
++double cephes_fabs(), cephes_exp(), cephes_sqrt();
++double polevl(), p1evl(), cephes_sin(), cephes_cos();
+ #endif
+ 
+ int airy( x, ai, aip, bi, bip )
+@@ -854,17 +854,17 @@
+ if( x < -2.09 )
+ 	{
+ 	domflg = 15;
+-	t = sqrt(-x);
++	t = cephes_sqrt(-x);
+ 	zeta = -2.0 * x * t / 3.0;
+-	t = sqrt(t);
++	t = cephes_sqrt(t);
+ 	k = sqpii / t;
+ 	z = 1.0/zeta;
+ 	zz = z * z;
+ 	uf = 1.0 + zz * polevl( zz, AFN, 8 ) / p1evl( zz, AFD, 9 );
+ 	ug = z * polevl( zz, AGN, 10 ) / p1evl( zz, AGD, 10 );
+ 	theta = zeta + 0.25 * PI;
+-	f = sin( theta );
+-	g = cos( theta );
++	f = cephes_sin( theta );
++	g = cephes_cos( theta );
+ 	*ai = k * (f * uf - g * ug);
+ 	*bi = k * (g * uf + f * ug);
+ 	uf = 1.0 + zz * polevl( zz, APFN, 8 ) / p1evl( zz, APFD, 9 );
+@@ -878,10 +878,10 @@
+ if( x >= 2.09 )	/* cbrt(9) */
+ 	{
+ 	domflg = 5;
+-	t = sqrt(x);
++	t = cephes_sqrt(x);
+ 	zeta = 2.0 * x * t / 3.0;
+-	g = exp( zeta );
+-	t = sqrt(t);
++	g = cephes_exp( zeta );
++	t = cephes_sqrt(t);
+ 	k = 2.0 * t * g;
+ 	z = 1.0/zeta;
+ 	f = polevl( z, AN, 7 ) / polevl( z, AD, 7 );
+@@ -921,7 +921,7 @@
+ 	k += 1.0;
+ 	ug /=k;
+ 	g += ug;
+-	t = fabs(uf/f);
++	t = cephes_fabs(uf/f);
+ 	}
+ uf = c1 * f;
+ ug = c2 * g;
+@@ -952,7 +952,7 @@
+ 	uf /=k;
+ 	g += ug;
+ 	k += 1.0;
+-	t = fabs(ug/g);
++	t = cephes_fabs(ug/g);
+ 	}
+ 
+ uf = c1 * f;
+--- Math-Cephes-0.36/libmd/arcdot.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/arcdot.c	2003-10-26 10:52:32.928210584 +0100
+@@ -60,12 +60,12 @@
+ 
+ #include "mconf.h"
+ #ifdef ANSIPROT
+-extern double sqrt ( double );
+-extern double acos ( double );
+-extern double asin ( double );
+-extern double atan ( double );
++extern double cephes_sqrt ( double );
++extern double cephes_acos ( double );
++extern double cephes_asin ( double );
++extern double cephes_atan ( double );
+ #else
+-double sqrt(), acos(), asin(), atan();
++double cephes_sqrt(), cephes_acos(), cephes_asin(), cephes_atan();
+ #endif
+ extern double PI;
+ 
+@@ -96,15 +96,15 @@
+ rt = (rr - (pr * pr) / pp) / qq;
+ if (rt <= 0.75)
+   {
+-    rt = sqrt(rt);
+-    qt = asin(rt);
++    rt = cephes_sqrt(rt);
++    qt = cephes_asin(rt);
+     if (pq < 0.0)
+       qt = PI - qt;
+   }
+ else
+   {
+-    pt = pq / sqrt(pp*qq);
+-    qt = acos(pt);
++    pt = pq / cephes_sqrt(pp*qq);
++    qt = cephes_acos(pt);
+   }
+ return qt;
+ }
+--- Math-Cephes-0.36/libmd/asin.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/asin.c	2003-10-26 10:49:04.059963384 +0100
+@@ -244,15 +244,15 @@
+ #ifdef ANSIPROT
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+-extern double sqrt ( double );
+-double asin ( double );
++extern double cephes_sqrt ( double );
++double cephes_asin ( double );
+ #else
+-double sqrt(), polevl(), p1evl();
+-double asin();
++double cephes_sqrt(), polevl(), p1evl();
++double cephes_asin();
+ #endif
+ extern double PIO2, PIO4, NAN;
+ 
+-double asin(x)
++double cephes_asin(x)
+ double x;
+ {
+ double a, p, z, zz;
+@@ -280,7 +280,7 @@
+ 	/* arcsin(1-x) = pi/2 - sqrt(2x)(1+R(x))  */
+ 	zz = 1.0 - a;
+ 	p = zz * polevl( zz, R, 4)/p1evl( zz, S, 4);
+-	zz = sqrt(zz+zz);
++	zz = cephes_sqrt(zz+zz);
+ 	z = PIO4 - zz;
+ 	zz = zz * p - MOREBITS;
+ 	z = z - zz;
+@@ -303,7 +303,7 @@
+ 
+ 
+ 
+-double acos(x)
++double cephes_acos(x)
+ double x;
+ {
+ double z;
+@@ -315,9 +315,9 @@
+ 	}
+ if( x > 0.5 )
+ 	{
+-	return( 2.0 * asin(  sqrt(0.5 - 0.5*x) ) );
++	return( 2.0 * cephes_asin(  cephes_sqrt(0.5 - 0.5*x) ) );
+ 	}
+-z = PIO4 - asin(x);
++z = PIO4 - cephes_asin(x);
+ z = z + MOREBITS;
+ z = z + PIO4;
+ return( z );
+--- Math-Cephes-0.36/libmd/asinh.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/asinh.c	2003-10-26 12:35:27.379551304 +0100
+@@ -113,14 +113,14 @@
+ #ifdef ANSIPROT
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+-extern double sqrt ( double );
+-extern double log ( double );
++extern double cephes_sqrt ( double );
++extern double cephes_log ( double );
+ #else
+-double log(), sqrt(), polevl(), p1evl();
++double cephes_log(), cephes_sqrt(), polevl(), p1evl();
+ #endif
+ extern double LOGE2, INFINITY;
+ 
+-double asinh(xx)
++double cephes_asinh(xx)
+ double xx;
+ {
+ double a, z, x;
+@@ -147,7 +147,7 @@
+ 	  if( x == INFINITY )
+ 	    return(xx);
+ #endif
+-	return( sign * (log(x) + LOGE2) );
++	return( sign * (cephes_log(x) + LOGE2) );
+ 	}
+ 
+ z = x * x;
+@@ -160,6 +160,6 @@
+ 	return(a);
+ 	}	
+ 
+-a = sqrt( z + 1.0 );
+-return( sign * log(x + a) );
++a = cephes_sqrt( z + 1.0 );
++return( sign * cephes_log(x + a) );
+ }
+--- Math-Cephes-0.36/libmd/cmplx.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/cmplx.c	2003-10-26 13:06:57.086272216 +0100
+@@ -72,21 +72,20 @@
+ #include "mconf.h"
+ 
+ #ifdef ANSIPROT
+-extern double fabs ( double );
+-extern double cabs ( cmplx * );
+-extern double sqrt ( double );
+-extern double atan2 ( double, double );
+-extern double cos ( double );
+-extern double sin ( double );
+-extern double sqrt ( double );
+-extern double frexp ( double, int * );
+-extern double ldexp ( double, int );
++extern double cephes_fabs ( double );
++extern double cephes_cabs ( cmplx * );
++extern double cephes_atan2 ( double, double );
++extern double cephes_cos ( double );
++extern double cephes_sin ( double );
++extern double cephes_sqrt ( double );
++extern double cephes_frexp ( double, int * );
++extern double cephes_ldexp ( double, int );
+ int isnan ( double );
+ void cdiv ( cmplx *, cmplx *, cmplx * );
+ void cadd ( cmplx *, cmplx *, cmplx * );
+ #else
+-double fabs(), cabs(), sqrt(), atan2(), cos(), sin();
+-double sqrt(), frexp(), ldexp();
++double cephes_fabs(), cephes_cabs(), cephes_atan2(), cephes_cos(), cephes_sin();
++double cephes_sqrt(), cephes_frexp(), cephes_ldexp();
+ int isnan();
+ void cdiv(), cadd();
+ #endif
+@@ -158,7 +157,7 @@
+ if( y < 1.0 )
+ 	{
+ 	w = MAXNUM * y;
+-	if( (fabs(p) > w) || (fabs(q) > w) || (y == 0.0) )
++	if( (cephes_fabs(p) > w) || (cephes_fabs(q) > w) || (y == 0.0) )
+ 		{
+ 		c->r = MAXNUM;
+ 		c->i = MAXNUM;
+@@ -273,7 +272,7 @@
+ #endif
+ 
+ 
+-double cabs( z )
++double cephes_cabs( z )
+ register cmplx *z;
+ {
+ double x, y, b, re, im;
+@@ -293,8 +292,8 @@
+   return(z->i);
+ #endif
+ 
+-re = fabs( z->r );
+-im = fabs( z->i );
++re = cephes_fabs( z->r );
++im = cephes_fabs( z->i );
+ 
+ if( re == 0.0 )
+ 	return( im );
+@@ -302,8 +301,8 @@
+ 	return( re );
+ 
+ /* Get the exponents of the numbers */
+-x = frexp( re, &ex );
+-y = frexp( im, &ey );
++x = cephes_frexp( re, &ex );
++y = cephes_frexp( im, &ey );
+ 
+ /* Check if one number is tiny compared to the other */
+ e = ex - ey;
+@@ -316,14 +315,14 @@
+ e = (ex + ey) >> 1;
+ 
+ /* Rescale so mean is about 1 */
+-x = ldexp( re, -e );
+-y = ldexp( im, -e );
++x = cephes_ldexp( re, -e );
++y = cephes_ldexp( im, -e );
+ 		
+ /* Hypotenuse of the right triangle */
+-b = sqrt( x * x  +  y * y );
++b = cephes_sqrt( x * x  +  y * y );
+ 
+ /* Compute the exponent of the answer. */
+-y = frexp( b, &ey );
++y = cephes_frexp( b, &ey );
+ ey = e + ey;
+ 
+ /* Check it for overflow and underflow. */
+@@ -336,7 +335,7 @@
+ 	return(0.0);
+ 
+ /* Undo the scaling */
+-b = ldexp( b, e );
++b = cephes_ldexp( b, e );
+ return( b );
+ }
+ /*							csqrt()
+@@ -387,7 +386,7 @@
+  */
+ 
+ 
+-void csqrt( z, w )
++void cephes_csqrt( z, w )
+ cmplx *z, *w;
+ {
+ cmplx q, s;
+@@ -401,12 +400,12 @@
+ 	if( x < 0.0 )
+ 		{
+ 		w->r = 0.0;
+-		w->i = sqrt(-x);
++		w->i = cephes_sqrt(-x);
+ 		return;
+ 		}
+ 	else
+ 		{
+-		w->r = sqrt(x);
++		w->r = cephes_sqrt(x);
+ 		w->i = 0.0;
+ 		return;
+ 		}
+@@ -415,8 +414,8 @@
+ 
+ if( x == 0.0 )
+ 	{
+-	r = fabs(y);
+-	r = sqrt(0.5*r);
++	r = cephes_fabs(y);
++	r = cephes_sqrt(0.5*r);
+ 	if( y > 0 )
+ 		w->r = r;
+ 	else
+@@ -428,18 +427,18 @@
+ /* Approximate  sqrt(x^2+y^2) - x  =  y^2/2x - y^4/24x^3 + ... .
+  * The relative error in the first term is approximately y^2/12x^2 .
+  */
+-if( (fabs(y) < 2.e-4 * fabs(x))
++if( (cephes_fabs(y) < 2.e-4 * cephes_fabs(x))
+    && (x > 0) )
+ 	{
+ 	t = 0.25*y*(y/x);
+ 	}
+ else
+ 	{
+-	r = cabs(z);
++	r = cephes_cabs(z);
+ 	t = 0.5*(r - x);
+ 	}
+ 
+-r = sqrt(t);
++r = cephes_sqrt(t);
+ q.i = r;
+ q.r = y/(2.0*r);
+ /* Heron iteration in complex arithmetic */
+@@ -450,12 +449,12 @@
+ }
+ 
+ 
+-double hypot( x, y )
++double cephes_hypot( x, y )
+ double x, y;
+ {
+ cmplx z;
+ 
+ z.r = x;
+ z.i = y;
+-return( cabs(&z) );
++return( cephes_cabs(&z) );
+ }
+--- Math-Cephes-0.36/libmd/dawsn.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/dawsn.c	2003-10-26 11:52:11.832134488 +0100
+@@ -343,12 +343,12 @@
+ 
+ #ifdef ANSIPROT
+ extern double chbevl ( double, void *, int );
+-extern double sqrt ( double );
+-extern double fabs ( double );
++extern double cephes_sqrt ( double );
++extern double cephes_fabs ( double );
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+ #else
+-double chbevl(), sqrt(), fabs(), polevl(), p1evl();
++double chbevl(), cephes_sqrt(), cephes_fabs(), polevl(), p1evl();
+ #endif
+ extern double PI, MACHEP;
+ 
+--- Math-Cephes-0.36/libmd/eigens.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/eigens.c	2003-10-26 11:52:25.932990832 +0100
+@@ -47,10 +47,10 @@
+ 
+ #include "mconf.h"
+ #ifdef ANSIPROT
+-extern double sqrt ( double );
+-extern double fabs ( double );
++extern double cephes_sqrt ( double );
++extern double cephes_fabs ( double );
+ #else
+-double sqrt(), fabs();
++double cephes_sqrt(), cephes_fabs();
+ #endif
+ 
+ void eigens( A, RR, E, N )
+@@ -90,7 +90,7 @@
+ 	}
+ if( ANORM <= 0.0 )
+ 	goto done;
+-ANORM = sqrt( ANORM + ANORM );
++ANORM = cephes_sqrt( ANORM + ANORM );
+ ANORMX = ANORM * RANGE / N;
+ THR = ANORM;
+ 
+@@ -110,7 +110,7 @@
+ 	MQ=(M*M+M)/2;
+ 	LM=L+MQ;
+ 	ALM=A[LM];
+-	if( fabs(ALM) < THR )
++	if( cephes_fabs(ALM) < THR )
+ 		continue;
+ 
+ 	IND=1;
+@@ -120,12 +120,12 @@
+ 	ALL=A[LL];
+ 	AMM=A[MM];
+ 	X=(ALL-AMM)/2.0;
+-	Y=-ALM/sqrt(ALM*ALM+X*X);
++	Y=-ALM/cephes_sqrt(ALM*ALM+X*X);
+ 	if(X < 0.0)
+ 		Y=-Y;
+-	SINX = Y / sqrt( 2.0 * (1.0 + sqrt( 1.0-Y*Y)) );
++	SINX = Y / cephes_sqrt( 2.0 * (1.0 + cephes_sqrt( 1.0-Y*Y)) );
+ 	SINX2=SINX*SINX;
+-	COSX=sqrt(1.0-SINX2);
++	COSX=cephes_sqrt(1.0-SINX2);
+ 	COSX2=COSX*COSX;
+ 	SINCS=SINX*COSX;
+ 
+--- Math-Cephes-0.36/libmd/ellie.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/ellie.c	2003-10-26 14:42:21.248067352 +0100
+@@ -54,18 +54,18 @@
+ #include "mconf.h"
+ extern double PI, PIO2, MACHEP;
+ #ifdef ANSIPROT
+-extern double sqrt ( double );
+-extern double fabs ( double );
+-extern double log ( double );
+-extern double sin ( double x );
+-extern double tan ( double x );
+-extern double atan ( double );
+-extern double floor ( double );
++extern double cephes_sqrt ( double );
++extern double cephes_fabs ( double );
++extern double cephes_log ( double );
++extern double cephes_sin ( double x );
++extern double cephes_tan ( double x );
++extern double cephes_atan ( double );
++extern double cephes_floor ( double );
+ extern double ellpe ( double );
+ extern double ellpk ( double );
+ double ellie ( double, double );
+ #else
+-double sqrt(), fabs(), log(), sin(), tan(), atan(), floor();
++double cephes_sqrt(), cephes_fabs(), cephes_log(), cephes_sin(), cephes_tan(), cephes_atan(), cephes_floor();
+ double ellpe(), ellpk(), ellie();
+ #endif
+ 
+@@ -79,7 +79,7 @@
+ if( m == 0.0 )
+ 	return( phi );
+ lphi = phi;
+-npio2 = floor( lphi/PIO2 );
++npio2 = cephes_floor( lphi/PIO2 );
+ if( npio2 & 1 )
+ 	npio2 += 1;
+ lphi = lphi - npio2 * PIO2;
+@@ -96,47 +96,47 @@
+ E = ellpe( a );
+ if( a == 0.0 )
+ 	{
+-	temp = sin( lphi );
++	temp = cephes_sin( lphi );
+ 	goto done;
+ 	}
+-t = tan( lphi );
+-b = sqrt(a);
++t = cephes_tan( lphi );
++b = cephes_sqrt(a);
+ /* Thanks to Brian Fitzgerald <fitzgb@mml0.meche.rpi.edu>
+    for pointing out an instability near odd multiples of pi/2.  */
+-if( fabs(t) > 10.0 )
++if( cephes_fabs(t) > 10.0 )
+ 	{
+ 	/* Transform the amplitude */
+ 	e = 1.0/(b*t);
+ 	/* ... but avoid multiple recursions.  */
+-	if( fabs(e) < 10.0 )
++	if( cephes_fabs(e) < 10.0 )
+ 		{
+-		e = atan(e);
+-		temp = E + m * sin( lphi ) * sin( e ) - ellie( e, m );
++		e = cephes_atan(e);
++		temp = E + m * cephes_sin( lphi ) * cephes_sin( e ) - ellie( e, m );
+ 		goto done;
+ 		}
+ 	}
+-c = sqrt(m);
++c = cephes_sqrt(m);
+ a = 1.0;
+ d = 1;
+ e = 0.0;
+ mod = 0;
+ 
+-while( fabs(c/a) > MACHEP )
++while( cephes_fabs(c/a) > MACHEP )
+ 	{
+ 	temp = b/a;
+-	lphi = lphi + atan(t*temp) + mod * PI;
++	lphi = lphi + cephes_atan(t*temp) + mod * PI;
+ 	mod = (lphi + PIO2)/PI;
+ 	t = t * ( 1.0 + temp )/( 1.0 - temp * t * t );
+ 	c = ( a - b )/2.0;
+-	temp = sqrt( a * b );
++	temp = cephes_sqrt( a * b );
+ 	a = ( a + b )/2.0;
+ 	b = temp;
+ 	d += d;
+-	e += c * sin(lphi);
++	e += c * cephes_sin(lphi);
+ 	}
+ 
+ temp = E / ellpk( 1.0 - m );
+-temp *= (atan(t) + mod * PI)/(d * a);
++temp *= (cephes_atan(t) + mod * PI)/(d * a);
+ temp += e;
+ 
+ done:
+--- Math-Cephes-0.36/libmd/ellik.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/ellik.c	2003-10-26 14:42:30.559651776 +0100
+@@ -55,16 +55,16 @@
+ 
+ #include "mconf.h"
+ #ifdef ANSIPROT
+-extern double sqrt ( double );
+-extern double fabs ( double );
+-extern double log ( double );
+-extern double tan ( double );
+-extern double atan ( double );
+-extern double floor ( double );
++extern double cephes_sqrt ( double );
++extern double cephes_fabs ( double );
++extern double cephes_log ( double );
++extern double cephes_tan ( double );
++extern double cephes_atan ( double );
++extern double cephes_floor ( double );
+ extern double ellpk ( double );
+ double ellik ( double, double );
+ #else
+-double sqrt(), fabs(), log(), tan(), atan(), floor(), ellpk();
++double cephes_sqrt(), cephes_fabs(), cephes_log(), cephes_tan(), cephes_atan(), cephes_floor(), ellpk();
+ double ellik();
+ #endif
+ extern double PI, PIO2, MACHEP, MAXNUM;
+@@ -80,14 +80,14 @@
+ a = 1.0 - m;
+ if( a == 0.0 )
+ 	{
+-	if( fabs(phi) >= PIO2 )
++	if( cephes_fabs(phi) >= PIO2 )
+ 		{
+ 		mtherr( "ellik", SING );
+ 		return( MAXNUM );
+ 		}
+-	return(  log(  tan( (PIO2 + phi)/2.0 )  )   );
++	return(  cephes_log(  cephes_tan( (PIO2 + phi)/2.0 )  )   );
+ 	}
+-npio2 = floor( phi/PIO2 );
++npio2 = cephes_floor( phi/PIO2 );
+ if( npio2 & 1 )
+ 	npio2 += 1;
+ if( npio2 )
+@@ -104,16 +104,16 @@
+ 	}
+ else
+ 	sign = 0;
+-b = sqrt(a);
+-t = tan( phi );
+-if( fabs(t) > 10.0 )
++b = cephes_sqrt(a);
++t = cephes_tan( phi );
++if( cephes_fabs(t) > 10.0 )
+ 	{
+ 	/* Transform the amplitude */
+ 	e = 1.0/(b*t);
+ 	/* ... but avoid multiple recursions.  */
+-	if( fabs(e) < 10.0 )
++	if( cephes_fabs(e) < 10.0 )
+ 		{
+-		e = atan(e);
++		e = cephes_atan(e);
+ 		if( npio2 == 0 )
+ 			K = ellpk( a );
+ 		temp = K - ellik( e, m );
+@@ -121,24 +121,24 @@
+ 		}
+ 	}
+ a = 1.0;
+-c = sqrt(m);
++c = cephes_sqrt(m);
+ d = 1;
+ mod = 0;
+ 
+-while( fabs(c/a) > MACHEP )
++while( cephes_fabs(c/a) > MACHEP )
+ 	{
+ 	temp = b/a;
+-	phi = phi + atan(t*temp) + mod * PI;
++	phi = phi + cephes_atan(t*temp) + mod * PI;
+ 	mod = (phi + PIO2)/PI;
+ 	t = t * ( 1.0 + temp )/( 1.0 - temp * t * t );
+ 	c = ( a - b )/2.0;
+-	temp = sqrt( a * b );
++	temp = cephes_sqrt( a * b );
+ 	a = ( a + b )/2.0;
+ 	b = temp;
+ 	d += d;
+ 	}
+ 
+-temp = (atan(t) + mod * PI)/(d * a);
++temp = (cephes_atan(t) + mod * PI)/(d * a);
+ 
+ done:
+ if( sign < 0 )
+--- Math-Cephes-0.36/libmd/ellpj.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/ellpj.c	2003-10-26 14:44:49.121587160 +0100
+@@ -63,19 +63,19 @@
+ 
+ #include "mconf.h"
+ #ifdef ANSIPROT
+-extern double sqrt ( double );
+-extern double fabs ( double );
+-extern double sin ( double );
+-extern double cos ( double );
+-extern double asin ( double );
+-extern double tanh ( double );
+-extern double sinh ( double );
+-extern double cosh ( double );
+-extern double atan ( double );
+-extern double exp ( double );
++extern double cephes_sqrt ( double );
++extern double cephes_fabs ( double );
++extern double cephes_sin ( double );
++extern double cephes_cos ( double );
++extern double cephes_asin ( double );
++extern double cephes_tanh ( double );
++extern double cephes_sinh ( double );
++extern double cephes_cosh ( double );
++extern double cephes_atan ( double );
++extern double cephes_exp ( double );
+ #else
+-double sqrt(), fabs(), sin(), cos(), asin(), tanh();
+-double sinh(), cosh(), atan(), exp();
++double cephes_sqrt(), cephes_fabs(), cephes_sin(), cephes_cos(), cephes_asin(), cephes_tanh();
++double cephes_sinh(), cephes_cosh(), cephes_atan(), cephes_exp();
+ #endif
+ extern double PIO2, MACHEP;
+ 
+@@ -101,8 +101,8 @@
+ 	}
+ if( m < 1.0e-9 )
+ 	{
+-	t = sin(u);
+-	b = cos(u);
++	t = cephes_sin(u);
++	b = cephes_cos(u);
+ 	ai = 0.25 * m * (u - t*b);
+ 	*sn = t - ai*b;
+ 	*cn = b + ai*t;
+@@ -114,12 +114,12 @@
+ if( m >= 0.9999999999 )
+ 	{
+ 	ai = 0.25 * (1.0-m);
+-	b = cosh(u);
+-	t = tanh(u);
++	b = cephes_cosh(u);
++	t = cephes_tanh(u);
+ 	phi = 1.0/b;
+-	twon = b * sinh(u);
++	twon = b * cephes_sinh(u);
+ 	*sn = t + ai * (twon - u)/(b*b);
+-	*ph = 2.0*atan(exp(u)) - PIO2 + ai*(twon - u)/b;
++	*ph = 2.0*cephes_atan(cephes_exp(u)) - PIO2 + ai*(twon - u)/b;
+ 	ai *= t * phi;
+ 	*cn = phi - ai * (twon - u);
+ 	*dn = phi + ai * (twon + u);
+@@ -129,12 +129,12 @@
+ 
+ /*	A. G. M. scale		*/
+ a[0] = 1.0;
+-b = sqrt(1.0 - m);
+-c[0] = sqrt(m);
++b = cephes_sqrt(1.0 - m);
++c[0] = cephes_sqrt(m);
+ twon = 1.0;
+ i = 0;
+ 
+-while( fabs(c[i]/a[i]) > MACHEP )
++while( cephes_fabs(c[i]/a[i]) > MACHEP )
+ 	{
+ 	if( i > 7 )
+ 		{
+@@ -144,7 +144,7 @@
+ 	ai = a[i];
+ 	++i;
+ 	c[i] = ( ai - b )/2.0;
+-	t = sqrt( ai * b );
++	t = cephes_sqrt( ai * b );
+ 	a[i] = ( ai + b )/2.0;
+ 	b = t;
+ 	twon *= 2.0;
+@@ -156,16 +156,16 @@
+ phi = twon * a[i] * u;
+ do
+ 	{
+-	t = c[i] * sin(phi) / a[i];
++	t = c[i] * cephes_sin(phi) / a[i];
+ 	b = phi;
+-	phi = (asin(t) + phi)/2.0;
++	phi = (cephes_asin(t) + phi)/2.0;
+ 	}
+ while( --i );
+ 
+-*sn = sin(phi);
+-t = cos(phi);
++*sn = cephes_sin(phi);
++t = cephes_cos(phi);
+ *cn = t;
+-*dn = t/cos(phi-b);
++*dn = t/cephes_cos(phi-b);
+ *ph = phi;
+ return(0);
+ }
+--- Math-Cephes-0.36/libmd/i0.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/i0.c	2003-10-26 11:41:38.235455824 +0100
+@@ -353,10 +353,10 @@
+ 
+ #ifdef ANSIPROT
+ extern double chbevl ( double, void *, int );
+-extern double exp ( double );
+-extern double sqrt ( double );
++extern double cephes_exp ( double );
++extern double cephes_sqrt ( double );
+ #else
+-double chbevl(), exp(), sqrt();
++double chbevl(), cephes_exp(), cephes_sqrt();
+ #endif
+ 
+ double i0(x)
+@@ -369,10 +369,10 @@
+ if( x <= 8.0 )
+ 	{
+ 	y = (x/2.0) - 2.0;
+-	return( exp(x) * chbevl( y, A, 30 ) );
++	return( cephes_exp(x) * chbevl( y, A, 30 ) );
+ 	}
+ 
+-return(  exp(x) * chbevl( 32.0/x - 2.0, B, 25 ) / sqrt(x) );
++return(  cephes_exp(x) * chbevl( 32.0/x - 2.0, B, 25 ) / cephes_sqrt(x) );
+ 
+ }
+ 
+@@ -392,6 +392,6 @@
+ 	return( chbevl( y, A, 30 ) );
+ 	}
+ 
+-return(  chbevl( 32.0/x - 2.0, B, 25 ) / sqrt(x) );
++return(  chbevl( 32.0/x - 2.0, B, 25 ) / cephes_sqrt(x) );
+ 
+ }
+--- Math-Cephes-0.36/libmd/i1.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/i1.c	2003-10-26 11:55:13.995441456 +0100
+@@ -352,11 +352,11 @@
+ /*							i1.c	*/
+ #ifdef ANSIPROT
+ extern double chbevl ( double, void *, int );
+-extern double exp ( double );
+-extern double sqrt ( double );
+-extern double fabs ( double );
++extern double cephes_exp ( double );
++extern double cephes_sqrt ( double );
++extern double cephes_fabs ( double );
+ #else
+-double chbevl(), exp(), sqrt(), fabs();
++double chbevl(), cephes_exp(), cephes_sqrt(), cephes_fabs();
+ #endif
+ 
+ double i1(x)
+@@ -364,15 +364,15 @@
+ { 
+ double y, z;
+ 
+-z = fabs(x);
++z = cephes_fabs(x);
+ if( z <= 8.0 )
+ 	{
+ 	y = (z/2.0) - 2.0;
+-	z = chbevl( y, A, 29 ) * z * exp(z);
++	z = chbevl( y, A, 29 ) * z * cephes_exp(z);
+ 	}
+ else
+ 	{
+-	z = exp(z) * chbevl( 32.0/z - 2.0, B, 25 ) / sqrt(z);
++	z = cephes_exp(z) * chbevl( 32.0/z - 2.0, B, 25 ) / cephes_sqrt(z);
+ 	}
+ if( x < 0.0 )
+ 	z = -z;
+@@ -386,7 +386,7 @@
+ { 
+ double y, z;
+ 
+-z = fabs(x);
++z = cephes_fabs(x);
+ if( z <= 8.0 )
+ 	{
+ 	y = (z/2.0) - 2.0;
+@@ -394,7 +394,7 @@
+ 	}
+ else
+ 	{
+-	z = chbevl( 32.0/z - 2.0, B, 25 ) / sqrt(z);
++	z = chbevl( 32.0/z - 2.0, B, 25 ) / cephes_sqrt(z);
+ 	}
+ if( x < 0.0 )
+ 	z = -z;
+--- Math-Cephes-0.36/libmd/igami.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/igami.c	2003-10-26 12:38:51.921456208 +0100
+@@ -54,13 +54,13 @@
+ #ifdef ANSIPROT
+ extern double igamc ( double, double );
+ extern double ndtri ( double );
+-extern double exp ( double );
+-extern double fabs ( double );
+-extern double log ( double );
+-extern double sqrt ( double );
++extern double cephes_exp ( double );
++extern double cephes_fabs ( double );
++extern double cephes_log ( double );
++extern double cephes_sqrt ( double );
+ extern double lgam ( double );
+ #else
+-double igamc(), ndtri(), exp(), fabs(), log(), sqrt(), lgam();
++double igamc(), ndtri(), cephes_exp(), cephes_fabs(), cephes_log(), cephes_sqrt(), lgam();
+ #endif
+ 
+ double igami( a, y0 )
+@@ -78,7 +78,7 @@
+ 
+ /* approximation to inverse function */
+ d = 1.0/(9.0*a);
+-y = ( 1.0 - d - ndtri(y0) * sqrt(d) );
++y = ( 1.0 - d - ndtri(y0) * cephes_sqrt(d) );
+ x = a * y * y * y;
+ 
+ lgm = lgam(a);
+@@ -101,13 +101,13 @@
+ 		yh = y;
+ 		}
+ /* compute the derivative of the function at this point */
+-	d = (a - 1.0) * log(x) - x - lgm;
++	d = (a - 1.0) * cephes_log(x) - x - lgm;
+ 	if( d < -MAXLOG )
+ 		goto ihalve;
+-	d = -exp(d);
++	d = -cephes_exp(d);
+ /* compute the step to the next approximation of x */
+ 	d = (y - y0)/d;
+-	if( fabs(d/x) < MACHEP )
++	if( cephes_fabs(d/x) < MACHEP )
+ 		goto done;
+ 	x = x - d;
+ 	}
+@@ -141,10 +141,10 @@
+ 	x = x1  +  d * (x0 - x1);
+ 	y = igamc( a, x );
+ 	lgm = (x0 - x1)/(x1 + x0);
+-	if( fabs(lgm) < dithresh )
++	if( cephes_fabs(lgm) < dithresh )
+ 		break;
+ 	lgm = (y - y0)/y0;
+-	if( fabs(lgm) < dithresh )
++	if( cephes_fabs(lgm) < dithresh )
+ 		break;
+ 	if( x <= 0.0 )
+ 		break;
+--- Math-Cephes-0.36/libmd/incbi.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/incbi.c	2003-10-26 12:39:06.506238984 +0100
+@@ -49,14 +49,14 @@
+ extern double MACHEP, MAXNUM, MAXLOG, MINLOG;
+ #ifdef ANSIPROT
+ extern double ndtri ( double );
+-extern double exp ( double );
+-extern double fabs ( double );
+-extern double log ( double );
+-extern double sqrt ( double );
++extern double cephes_exp ( double );
++extern double cephes_fabs ( double );
++extern double cephes_log ( double );
++extern double cephes_sqrt ( double );
+ extern double lgam ( double );
+ extern double incbet ( double, double, double );
+ #else
+-double ndtri(), exp(), fabs(), log(), sqrt(), lgam(), incbet();
++double ndtri(), cephes_exp(), cephes_fabs(), cephes_log(), cephes_sqrt(), lgam(), incbet();
+ #endif
+ 
+ double incbi( aa, bb, yy0 )
+@@ -114,7 +114,7 @@
+ 
+ lgm = (yp * yp - 3.0)/6.0;
+ x = 2.0/( 1.0/(2.0*a-1.0)  +  1.0/(2.0*b-1.0) );
+-d = yp * sqrt( x + lgm ) / x
++d = yp * cephes_sqrt( x + lgm ) / x
+ 	- ( 1.0/(2.0*b-1.0) - 1.0/(2.0*a-1.0) )
+ 	* (lgm + 5.0/6.0 - 2.0/(3.0*x));
+ d = 2.0 * d;
+@@ -123,10 +123,10 @@
+ 	x = 1.0;
+ 	goto under;
+ 	}
+-x = a/( a + b * exp(d) );
++x = a/( a + b * cephes_exp(d) );
+ y = incbet( a, b, x );
+ yp = (y - y0)/y0;
+-if( fabs(yp) < 0.2 )
++if( cephes_fabs(yp) < 0.2 )
+ 	goto newt;
+ 
+ /* Resort to interval halving if not close enough. */
+@@ -150,10 +150,10 @@
+ 			}
+ 		y = incbet( a, b, x );
+ 		yp = (x1 - x0)/(x1 + x0);
+-		if( fabs(yp) < dithresh )
++		if( cephes_fabs(yp) < dithresh )
+ 			goto newt;
+ 		yp = (y-y0)/y0;
+-		if( fabs(yp) < dithresh )
++		if( cephes_fabs(yp) < dithresh )
+ 			goto newt;
+ 		}
+ 	if( y < y0 )
+@@ -269,12 +269,12 @@
+ 	if( x == 1.0 || x == 0.0 )
+ 		break;
+ 	/* Compute the derivative of the function at this point. */
+-	d = (a - 1.0) * log(x) + (b - 1.0) * log(1.0-x) + lgm;
++	d = (a - 1.0) * cephes_log(x) + (b - 1.0) * cephes_log(1.0-x) + lgm;
+ 	if( d < MINLOG )
+ 		goto done;
+ 	if( d > MAXLOG )
+ 		break;
+-	d = exp(d);
++	d = cephes_exp(d);
+ 	/* Compute the step to the next approximation of x. */
+ 	d = (y - y0)/d;
+ 	xt = x - d;
+@@ -293,7 +293,7 @@
+ 			break;
+ 		}
+ 	x = xt;
+-	if( fabs(d/x) < 128.0 * MACHEP )
++	if( cephes_fabs(d/x) < 128.0 * MACHEP )
+ 		goto done;
+ 	}
+ /* Did not converge.  */
+--- Math-Cephes-0.36/libmd/j0.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/j0.c	2003-10-26 13:09:06.387615424 +0100
+@@ -461,18 +461,18 @@
+ #ifdef ANSIPROT
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+-extern double log ( double );
+-extern double sin ( double );
+-extern double cos ( double );
+-extern double sqrt ( double );
+-double j0 ( double );
++extern double cephes_log ( double );
++extern double cephes_sin ( double );
++extern double cephes_cos ( double );
++extern double cephes_sqrt ( double );
++double cephes_j0 ( double );
+ #else
+-double polevl(), p1evl(), log(), sin(), cos(), sqrt();
+-double j0();
++double polevl(), p1evl(), cephes_log(), cephes_sin(), cephes_cos(), cephes_sqrt();
++double cephes_j0();
+ #endif
+ extern double TWOOPI, SQ2OPI, PIO4;
+ 
+-double j0(x)
++double cephes_j0(x)
+ double x;
+ {
+ double w, z, p, q, xn;
+@@ -496,8 +496,8 @@
+ p = polevl( q, PP, 6)/polevl( q, PQ, 6 );
+ q = polevl( q, QP, 7)/p1evl( q, QQ, 7 );
+ xn = x - PIO4;
+-p = p * cos(xn) - w * q * sin(xn);
+-return( p * SQ2OPI / sqrt(x) );
++p = p * cephes_cos(xn) - w * q * cephes_sin(xn);
++return( p * SQ2OPI / cephes_sqrt(x) );
+ }
+ 
+ /*							y0() 2	*/
+@@ -515,7 +515,7 @@
+ */
+ extern double MAXNUM;
+ 
+-double y0(x)
++double cephes_y0(x)
+ double x;
+ {
+ double w, z, p, q, xn;
+@@ -529,7 +529,7 @@
+ 		}
+ 	z = x * x;
+ 	w = polevl( z, YP, 7) / p1evl( z, YQ, 7 );
+-	w += TWOOPI * log(x) * j0(x);
++	w += TWOOPI * cephes_log(x) * cephes_j0(x);
+ 	return( w );
+ 	}
+ 
+@@ -538,6 +538,6 @@
+ p = polevl( z, PP, 6)/polevl( z, PQ, 6 );
+ q = polevl( z, QP, 7)/p1evl( z, QQ, 7 );
+ xn = x - PIO4;
+-p = p * sin(xn) + w * q * cos(xn);
+-return( p * SQ2OPI / sqrt(x) );
++p = p * cephes_sin(xn) + w * q * cephes_cos(xn);
++return( p * SQ2OPI / cephes_sqrt(x) );
+ }
+--- Math-Cephes-0.36/libmd/j1.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/j1.c	2003-10-26 13:09:17.382943880 +0100
+@@ -447,18 +447,18 @@
+ #ifdef ANSIPROT
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+-extern double log ( double );
+-extern double sin ( double );
+-extern double cos ( double );
+-extern double sqrt ( double );
+-double j1 ( double );
++extern double cephes_log ( double );
++extern double cephes_sin ( double );
++extern double cephes_cos ( double );
++extern double cephes_sqrt ( double );
++double cephes_j1 ( double );
+ #else
+-double polevl(), p1evl(), log(), sin(), cos(), sqrt();
+-double j1();
++double polevl(), p1evl(), cephes_log(), cephes_sin(), cephes_cos(), cephes_sqrt();
++double cephes_j1();
+ #endif
+ extern double TWOOPI, THPIO4, SQ2OPI;
+ 
+-double j1(x)
++double cephes_j1(x)
+ double x;
+ {
+ double w, z, p, q, xn;
+@@ -480,14 +480,14 @@
+ p = polevl( z, PP, 6)/polevl( z, PQ, 6 );
+ q = polevl( z, QP, 7)/p1evl( z, QQ, 7 );
+ xn = x - THPIO4;
+-p = p * cos(xn) - w * q * sin(xn);
+-return( p * SQ2OPI / sqrt(x) );
++p = p * cephes_cos(xn) - w * q * cephes_sin(xn);
++return( p * SQ2OPI / cephes_sqrt(x) );
+ }
+ 
+ 
+ extern double MAXNUM;
+ 
+-double y1(x)
++double cephes_y1(x)
+ double x;
+ {
+ double w, z, p, q, xn;
+@@ -501,7 +501,7 @@
+ 		}
+ 	z = x * x;
+ 	w = x * (polevl( z, YP, 5 ) / p1evl( z, YQ, 8 ));
+-	w += TWOOPI * ( j1(x) * log(x)  -  1.0/x );
++	w += TWOOPI * ( cephes_j1(x) * cephes_log(x)  -  1.0/x );
+ 	return( w );
+ 	}
+ 
+@@ -510,6 +510,6 @@
+ p = polevl( z, PP, 6)/polevl( z, PQ, 6 );
+ q = polevl( z, QP, 7)/p1evl( z, QQ, 7 );
+ xn = x - THPIO4;
+-p = p * sin(xn) + w * q * cos(xn);
+-return( p * SQ2OPI / sqrt(x) );
++p = p * cephes_sin(xn) + w * q * cephes_cos(xn);
++return( p * SQ2OPI / cephes_sqrt(x) );
+ }
+--- Math-Cephes-0.36/libmd/k0.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/k0.c	2003-10-26 12:40:00.282063816 +0100
+@@ -275,12 +275,12 @@
+ /*							k0.c	*/
+ #ifdef ANSIPROT 
+ extern double chbevl ( double, void *, int );
+-extern double exp ( double );
++extern double cephes_exp ( double );
+ extern double i0 ( double );
+-extern double log ( double );
+-extern double sqrt ( double );
++extern double cephes_log ( double );
++extern double cephes_sqrt ( double );
+ #else
+-double chbevl(), exp(), i0(), log(), sqrt();
++double chbevl(), cephes_exp(), i0(), cephes_log(), cephes_sqrt();
+ #endif
+ extern double PI;
+ extern double MAXNUM;
+@@ -299,11 +299,11 @@
+ if( x <= 2.0 )
+ 	{
+ 	y = x * x - 2.0;
+-	y = chbevl( y, A, 10 ) - log( 0.5 * x ) * i0(x);
++	y = chbevl( y, A, 10 ) - cephes_log( 0.5 * x ) * i0(x);
+ 	return( y );
+ 	}
+ z = 8.0/x - 2.0;
+-y = exp(-x) * chbevl( z, B, 25 ) / sqrt(x);
++y = cephes_exp(-x) * chbevl( z, B, 25 ) / cephes_sqrt(x);
+ return(y);
+ }
+ 
+@@ -324,10 +324,10 @@
+ if( x <= 2.0 )
+ 	{
+ 	y = x * x - 2.0;
+-	y = chbevl( y, A, 10 ) - log( 0.5 * x ) * i0(x);
+-	return( y * exp(x) );
++	y = chbevl( y, A, 10 ) - cephes_log( 0.5 * x ) * i0(x);
++	return( y * cephes_exp(x) );
+ 	}
+ 
+-y = chbevl( 8.0/x - 2.0, B, 25 ) / sqrt(x);
++y = chbevl( 8.0/x - 2.0, B, 25 ) / cephes_sqrt(x);
+ return(y);
+ }
+--- Math-Cephes-0.36/libmd/k1.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/k1.c	2003-10-26 12:40:11.784315208 +0100
+@@ -278,12 +278,12 @@
+ 
+ #ifdef ANSIPROT
+ extern double chbevl ( double, void *, int );
+-extern double exp ( double );
++extern double cephes_exp ( double );
+ extern double i1 ( double );
+-extern double log ( double );
+-extern double sqrt ( double );
++extern double cephes_log ( double );
++extern double cephes_sqrt ( double );
+ #else
+-double chbevl(), exp(), i1(), log(), sqrt();
++double chbevl(), cephes_exp(), i1(), cephes_log(), cephes_sqrt();
+ #endif
+ extern double PI;
+ extern double MINLOG, MAXNUM;
+@@ -303,11 +303,11 @@
+ if( x <= 2.0 )
+ 	{
+ 	y = x * x - 2.0;
+-	y =  log(z) * i1(x)  +  chbevl( y, A, 11 ) / x;
++	y =  cephes_log(z) * i1(x)  +  chbevl( y, A, 11 ) / x;
+ 	return( y );
+ 	}
+ 
+-return(  exp(-x) * chbevl( 8.0/x - 2.0, B, 25 ) / sqrt(x) );
++return(  cephes_exp(-x) * chbevl( 8.0/x - 2.0, B, 25 ) / cephes_sqrt(x) );
+ }
+ 
+ 
+@@ -327,9 +327,9 @@
+ if( x <= 2.0 )
+ 	{
+ 	y = x * x - 2.0;
+-	y =  log( 0.5 * x ) * i1(x)  +  chbevl( y, A, 11 ) / x;
+-	return( y * exp(x) );
++	y =  cephes_log( 0.5 * x ) * i1(x)  +  chbevl( y, A, 11 ) / x;
++	return( y * cephes_exp(x) );
+ 	}
+ 
+-return(  chbevl( 8.0/x - 2.0, B, 25 ) / sqrt(x) );
++return(  chbevl( 8.0/x - 2.0, B, 25 ) / cephes_sqrt(x) );
+ }
+--- Math-Cephes-0.36/libmd/kn.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/kn.c	2003-10-26 12:40:17.716413392 +0100
+@@ -82,12 +82,12 @@
+ #define EUL 5.772156649015328606065e-1
+ #define MAXFAC 31
+ #ifdef ANSIPROT
+-extern double fabs ( double );
+-extern double exp ( double );
+-extern double log ( double );
+-extern double sqrt ( double );
++extern double cephes_fabs ( double );
++extern double cephes_exp ( double );
++extern double cephes_log ( double );
++extern double cephes_sqrt ( double );
+ #else
+-double fabs(), exp(), log(), sqrt();
++double cephes_fabs(), cephes_exp(), cephes_log(), cephes_sqrt();
+ #endif
+ extern double MACHEP, MAXNUM, MAXLOG, PI;
+ 
+@@ -163,14 +163,14 @@
+ 			zn *= z;
+ 			t = nk1f * zn / kf;
+ 			s += t;   
+-			if( (MAXNUM - fabs(t)) < fabs(s) )
++			if( (MAXNUM - cephes_fabs(t)) < cephes_fabs(s) )
+ 				goto overf;
+ 			if( (tox > 1.0) && ((MAXNUM/tox) < zmn) )
+ 				goto overf;
+ 			zmn *= tox;
+ 			}
+ 		s *= 0.5;
+-		t = fabs(s);
++		t = cephes_fabs(s);
+ 		if( (zmn > 1.0) && ((MAXNUM/zmn) < t) )
+ 			goto overf;
+ 		if( (t > 1.0) && ((MAXNUM/t) < zmn) )
+@@ -180,7 +180,7 @@
+ 	}
+ 
+ 
+-tlg = 2.0 * log( 0.5 * x );
++tlg = 2.0 * cephes_log( 0.5 * x );
+ pk = -EUL;
+ if( n == 0 )
+ 	{
+@@ -202,7 +202,7 @@
+ 	s += (pk+pn-tlg)*t;
+ 	k += 1.0;
+ 	}
+-while( fabs(t/s) > MACHEP );
++while( cephes_fabs(t/s) > MACHEP );
+ 
+ s = 0.5 * s / zmn;
+ if( n & 1 )
+@@ -236,7 +236,7 @@
+ 	{
+ 	z = pn - pk * pk;
+ 	t = t * z /(fn * z0);
+-	nk1f = fabs(t);
++	nk1f = cephes_fabs(t);
+ 	if( (i >= n) && (nk1f > nkf) )
+ 		{
+ 		goto adone;
+@@ -247,9 +247,9 @@
+ 	pk += 2.0;
+ 	i += 1;
+ 	}
+-while( fabs(t/s) > MACHEP );
++while( cephes_fabs(t/s) > MACHEP );
+ 
+ adone:
+-ans = exp(-x) * sqrt( PI/(2.0*x) ) * s;
++ans = cephes_exp(-x) * cephes_sqrt( PI/(2.0*x) ) * s;
+ return(ans);
+ }
+--- Math-Cephes-0.36/libmd/ndtr.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/ndtr.c	2003-10-26 12:49:52.190080120 +0100
+@@ -387,17 +387,17 @@
+ #ifdef ANSIPROT
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+-extern double exp ( double );
+-extern double log ( double );
+-extern double fabs ( double );
+-extern double sqrt ( double );
++extern double cephes_exp ( double );
++extern double cephes_log ( double );
++extern double cephes_fabs ( double );
++extern double cephes_sqrt ( double );
+ extern double expx2 ( double, int );
+-double erf ( double );
+-double erfc ( double );
++double cephes_erf ( double );
++double cephes_erfc ( double );
+ static double erfce ( double );
+ #else
+-double polevl(), p1evl(), exp(), log(), fabs();
+-double erf(), erfc(), expx2(), sqrt();
++double polevl(), p1evl(), cephes_exp(), cephes_log(), cephes_fabs();
++double cephes_erf(), cephes_erfc(), expx2(), cephes_sqrt();
+ static double erfce();
+ #endif
+ 
+@@ -407,11 +407,11 @@
+ double x, y, z;
+ 
+ x = a * SQRTH;
+-z = fabs(x);
++z = cephes_fabs(x);
+ 
+ /* if( z < SQRTH ) */
+ if( z < 1.0 )
+-	y = 0.5 + 0.5 * erf(x);
++	y = 0.5 + 0.5 * cephes_erf(x);
+ 
+ else
+ 	{
+@@ -420,9 +420,9 @@
+ 	y = 0.5 * erfce(z);
+ 	/* Multiply by exp(-x^2 / 2)  */
+ 	z = expx2(a, -1);
+-	y = y * sqrt(z);
++	y = y * cephes_sqrt(z);
+ #else
+-	y = 0.5 * erfc(z);
++	y = 0.5 * cephes_erfc(z);
+ #endif
+ 	if( x > 0 )
+ 		y = 1.0 - y;
+@@ -432,7 +432,7 @@
+ }
+ 
+ 
+-double erfc(a)
++double cephes_erfc(a)
+ double a;
+ {
+ double p,q,x,y,z;
+@@ -444,7 +444,7 @@
+ 	x = a;
+ 
+ if( x < 1.0 )
+-	return( 1.0 - erf(a) );
++	return( 1.0 - cephes_erf(a) );
+ 
+ z = -a * a;
+ 
+@@ -462,7 +462,7 @@
+ /* Compute z = exp(z).  */
+ z = expx2(a, -1);
+ #else
+-z = exp(z);
++z = cephes_exp(z);
+ #endif
+ if( x < 8.0 )
+ 	{
+@@ -510,13 +510,13 @@
+ 
+ 
+ 
+-double erf(x)
++double cephes_erf(x)
+ double x;
+ {
+ double y, z;
+ 
+-if( fabs(x) > 1.0 )
+-	return( 1.0 - erfc(x) );
++if( cephes_fabs(x) > 1.0 )
++	return( 1.0 - cephes_erfc(x) );
+ z = x * x;
+ y = x * polevl( z, T, 4 ) / p1evl( z, U, 5 );
+ return( y );
+--- Math-Cephes-0.36/libmd/ndtri.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/ndtri.c	2003-10-26 12:41:01.660732840 +0100
+@@ -363,10 +363,10 @@
+ #ifdef ANSIPROT
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+-extern double log ( double );
+-extern double sqrt ( double );
++extern double cephes_log ( double );
++extern double cephes_sqrt ( double );
+ #else
+-double polevl(), p1evl(), log(), sqrt();
++double polevl(), p1evl(), cephes_log(), cephes_sqrt();
+ #endif
+ 
+ double ndtri(y0)
+@@ -402,8 +402,8 @@
+ 	return(x);
+ 	}
+ 
+-x = sqrt( -2.0 * log(y) );
+-x0 = x - log(x)/x;
++x = cephes_sqrt( -2.0 * cephes_log(y) );
++x0 = x - cephes_log(x)/x;
+ 
+ z = 1.0/x;
+ if( x < 8.0 ) /* y > exp(-32) = 1.2664165549e-14 */
+--- Math-Cephes-0.36/libmd/polmisc.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/polmisc.c	2003-10-26 13:10:40.781265408 +0100
+@@ -6,11 +6,11 @@
+ #include <stdio.h>
+ #include "mconf.h"
+ #ifdef ANSIPROT
+-extern double atan2 ( double, double );
+-extern double sqrt ( double );
+-extern double fabs ( double );
+-extern double sin ( double );
+-extern double cos ( double );
++extern double cephes_atan2 ( double, double );
++extern double cephes_sqrt ( double );
++extern double cephes_fabs ( double );
++extern double cephes_sin ( double );
++extern double cephes_cos ( double );
+ extern void polclr ( double *a, int n );
+ extern void polmov ( double *a, int na, double *b );
+ extern void polmul ( double a[], int na, double b[], int nb, double c[] );
+@@ -21,7 +21,7 @@
+ extern void * malloc ( long );
+ extern void free ( void * );
+ #else
+-double atan2(), sqrt(), fabs(), sin(), cos();
++double cephes_atan2(), cephes_sqrt(), cephes_fabs(), cephes_sin(), cephes_cos();
+ void polclr(), polmov(), polsbt(), poladd(), polsub(), polmul();
+ int poldiv();
+ void * malloc();
+@@ -88,7 +88,7 @@
+       t = num[1];
+       a = den[1];
+     }
+-  t = atan2( t, a );  /* arctan(num/den), the ANSI argument order */
++  t = cephes_atan2( t, a );  /* arctan(num/den), the ANSI argument order */
+   polq = (double * )malloc( (MAXPOL+1) * sizeof (double) );
+   polu = (double * )malloc( (MAXPOL+1) * sizeof (double) );
+   polt = (double * )malloc( (MAXPOL+1) * sizeof (double) );
+@@ -173,7 +173,7 @@
+   /* series development sqrt(1+x) = 1  +  x / 2  -  x**2 / 8  +  x**3 / 16
+      hopes that first (constant) term is greater than what follows   */
+   polsbt( x, nn, psqrt, nn, y);
+-  t = sqrt( t );
++  t = cephes_sqrt( t );
+   for( i=0; i<=nn; i++ )
+     y[i] *= t;
+ 
+@@ -195,7 +195,7 @@
+ 		y[i] *= 0.5;
+ 	for( i=0; i<=nn; i++ )
+ 		{
+-		u = fabs( y[i] - z[i] );
++		u = cephes_fabs( y[i] - z[i] );
+ 		if( u > 1.0e-15 )
+ 			goto more;
+ 		}
+@@ -245,13 +245,13 @@
+   /* c = cos (b) */
+   w[0] = 0.0;
+   polsbt( w, nn, pcos, nn, c );
+-  sc = sin(a);
++  sc = cephes_sin(a);
+   /* sin(a) cos (b) */
+   for( i=0; i<=nn; i++ )
+     c[i] *= sc;
+   /* y = sin (b)  */
+   polsbt( w, nn, psin, nn, y );
+-  sc = cos(a);
++  sc = cephes_cos(a);
+   /* cos(a) sin(b) */
+   for( i=0; i<=nn; i++ )
+     y[i] *= sc;
+@@ -277,7 +277,7 @@
+   double a, sc;
+   double *w, *c;
+   int i;
+-  double sin(), cos();
++  double cephes_sin(), cephes_cos();
+   if (nn > N)
+     {
+       mtherr ("polatn", OVERFLOW);
+@@ -292,13 +292,13 @@
+   w[0] = 0.0;
+   /* c = cos(b)  */
+   polsbt( w, nn, pcos, nn, c );
+-  sc = cos(a);
++  sc = cephes_cos(a);
+   /* cos(a) cos(b)  */
+   for( i=0; i<=nn; i++ )
+     c[i] *= sc;
+   /* y = sin(b) */
+   polsbt( w, nn, psin, nn, y );
+-  sc = sin(a);
++  sc = cephes_sin(a);
+   /* sin(a) sin(b) */
+   for( i=0; i<=nn; i++ )
+     y[i] *= sc;
+--- Math-Cephes-0.36/libmd/stdtr.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/stdtr.c	2003-10-26 12:02:18.197952872 +0100
+@@ -88,13 +88,13 @@
+ 
+ extern double PI, MACHEP, MAXNUM;
+ #ifdef ANSIPROT
+-extern double sqrt ( double );
+-extern double atan ( double );
++extern double cephes_sqrt ( double );
++extern double cephes_atan ( double );
+ extern double incbet ( double, double, double );
+ extern double incbi ( double, double, double );
+-extern double fabs ( double );
++extern double cephes_fabs ( double );
+ #else
+-double sqrt(), atan(), incbet(), incbi(), fabs();
++double cephes_sqrt(), cephes_atan(), incbet(), incbi(), cephes_fabs();
+ #endif
+ 
+ double stdtr( k, t )
+@@ -137,8 +137,8 @@
+ 
+ 	/*	computation for odd k	*/
+ 
+-	xsqk = x/sqrt(rk);
+-	p = atan( xsqk );
++	xsqk = x/cephes_sqrt(rk);
++	p = cephes_atan( xsqk );
+ 	if( k > 1 )
+ 		{
+ 		f = 1.0;
+@@ -171,7 +171,7 @@
+ 		f += tz;
+ 		j += 2;
+ 		}
+-	p = f * x/sqrt(z*rk);
++	p = f * x/cephes_sqrt(z*rk);
+ 	}
+ 
+ /*	common exit	*/
+@@ -204,8 +204,8 @@
+ 	if( p == 0.5 )
+ 		return( 0.0 );
+ 	z = 1.0 - 2.0 * p;
+-	z = incbi( 0.5, 0.5*rk, fabs(z) );
+-	t = sqrt( rk*z/(1.0-z) );
++	z = incbi( 0.5, 0.5*rk, cephes_fabs(z) );
++	t = cephes_sqrt( rk*z/(1.0-z) );
+ 	if( p < 0.5 )
+ 		t = -t;
+ 	return( t );
+@@ -220,6 +220,6 @@
+ 
+ if( MAXNUM * z < rk )
+ 	return(rflg* MAXNUM);
+-t = sqrt( rk/z - rk );
++t = cephes_sqrt( rk/z - rk );
+ return( rflg * t );
+ }
+--- Math-Cephes-0.36/libmd/atan.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/atan.c	2003-10-26 11:50:29.358712816 +0100
+@@ -170,12 +170,12 @@
+ #ifdef ANSIPROT
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+-extern double atan ( double );
+-extern double fabs ( double );
++extern double cephes_atan ( double );
++extern double cephes_fabs ( double );
+ extern int signbit ( double );
+ extern int isnan ( double );
+ #else
+-double polevl(), p1evl(), atan(), fabs();
++double polevl(), p1evl(), cephes_atan(), cephes_fabs();
+ int signbit(), isnan();
+ #endif
+ extern double PI, PIO2, PIO4, INFINITY, NEGZERO, MAXNUM;
+@@ -188,7 +188,7 @@
+ #endif
+ 
+ 
+-double atan(x)
++double cephes_atan(x)
+ double x;
+ {
+ double y, z;
+@@ -245,9 +245,9 @@
+ /*							atan2	*/
+ 
+ #ifdef ANSIC
+-double atan2( y, x )
++double cephes_atan2( y, x )
+ #else
+-double atan2( x, y )
++double cephes_atan2( x, y )
+ #endif
+ double x, y;
+ {
+@@ -343,7 +343,7 @@
+ #ifdef INFINITIES
+ if( x == 0.0 )
+ #else
+-if( fabs(x) <= (fabs(y) / MAXNUM) )
++if( cephes_fabs(x) <= (cephes_fabs(y) / MAXNUM) )
+ #endif
+ 	{
+ 	if( code & 1 )
+@@ -384,7 +384,7 @@
+ #endif
+ 	}
+ 
+-z = w + atan( y/x );
++z = w + cephes_atan( y/x );
+ #ifdef MINUSZERO
+ if( z == 0.0 && y < 0 )
+ 	z = NEGZERO;
+--- Math-Cephes-0.36/libmd/atanh.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/atanh.c	2003-10-26 12:35:37.243051824 +0100
+@@ -113,16 +113,16 @@
+ #endif
+ 
+ #ifdef ANSIPROT
+-extern double fabs ( double );
+-extern double log ( double x );
++extern double cephes_fabs ( double );
++extern double cephes_log ( double x );
+ extern double polevl ( double x, void *P, int N );
+ extern double p1evl ( double x, void *P, int N );
+ #else
+-double fabs(), log(), polevl(), p1evl();
++double cephes_fabs(), cephes_log(), polevl(), p1evl();
+ #endif
+ extern double INFINITY, NAN;
+ 
+-double atanh(x)
++double cephes_atanh(x)
+ double x;
+ {
+ double s, z;
+@@ -131,7 +131,7 @@
+ if( x == 0.0 )
+ 	return(x);
+ #endif
+-z = fabs(x);
++z = cephes_fabs(x);
+ if( z >= 1.0 )
+ 	{
+ 	if( x == 1.0 )
+@@ -152,5 +152,5 @@
+ 	return(s);
+ 	}
+ 
+-return( 0.5 * log((1.0+x)/(1.0-x)) );
++return( 0.5 * cephes_log((1.0+x)/(1.0-x)) );
+ }
+--- Math-Cephes-0.36/libmd/cbrt.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/cbrt.c	2003-10-26 12:15:36.645570384 +0100
+@@ -49,16 +49,16 @@
+ static double CBRT4I = 0.62996052494743658238361;
+ 
+ #ifdef ANSIPROT
+-extern double frexp ( double, int * );
+-extern double ldexp ( double, int );
++extern double cephes_frexp ( double, int * );
++extern double cephes_ldexp ( double, int );
+ extern int isnan ( double );
+ extern int isfinite ( double );
+ #else
+-double frexp(), ldexp();
++double cephes_frexp(), cephes_ldexp();
+ int isnan(), isfinite();
+ #endif
+ 
+-double cbrt(x)
++double cephes_cbrt(x)
+ double x;
+ {
+ int e, rem, sign;
+@@ -86,7 +86,7 @@
+ /* extract power of 2, leaving
+  * mantissa between 0.5 and 1
+  */
+-x = frexp( x, &e );
++x = cephes_frexp( x, &e );
+ 
+ /* Approximate cube root of number between .5 and 1,
+  * peak relative error = 9.2e-6
+@@ -126,7 +126,7 @@
+ 	}
+ 
+ /* multiply by power of 2 */
+-x = ldexp( x, e );
++x = cephes_ldexp( x, e );
+ 
+ /* Newton iteration */
+ x -= ( x - (z/(x*x)) )*0.33333333333333333333;
+--- Math-Cephes-0.36/libmd/cosh.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/cosh.c	2003-10-26 11:37:47.785489544 +0100
+@@ -46,16 +46,16 @@
+ 
+ #include "mconf.h"
+ #ifdef ANSIPROT
+-extern double exp ( double );
++extern double cephes_exp ( double );
+ extern int isnan ( double );
+ extern int isfinite ( double );
+ #else
+-double exp();
++double cephes_exp();
+ int isnan(), isfinite();
+ #endif
+ extern double MAXLOG, INFINITY, LOGE2;
+ 
+-double cosh(x)
++double cephes_cosh(x)
+ double x;
+ {
+ double y;
+@@ -73,11 +73,11 @@
+ 	}	
+ if( x >= (MAXLOG - LOGE2) )
+ 	{
+-	y = exp(0.5 * x);
++	y = cephes_exp(0.5 * x);
+ 	y = (0.5 * y) * y;
+ 	return(y);
+ 	}
+-y = exp(x);
++y = cephes_exp(x);
+ y = 0.5 * (y + 1.0 / y);
+ return( y );
+ }
+--- Math-Cephes-0.36/libmd/ei.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/ei.c	2003-10-26 12:36:43.613961912 +0100
+@@ -41,12 +41,12 @@
+ 
+ #include "mconf.h"
+ #ifdef ANSIPROT
+-extern double log ( double );
+-extern double exp ( double );
++extern double cephes_log ( double );
++extern double cephes_exp ( double );
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+ #else
+-extern double log(), exp(), polevl(), p1evl();
++extern double cephes_log(), cephes_exp(), polevl(), p1evl();
+ #endif
+ 
+ #define EUL 5.772156649015328606065e-1
+@@ -1015,7 +1015,7 @@
+       f = polevl(x,A,5) / p1evl(x,B,6);
+       /*      f = polevl(x,A,6) / p1evl(x,B,7); */
+       /*      f = polevl(x,A,8) / p1evl(x,B,9); */
+-      return (EUL + log(x) + x * f);
++      return (EUL + cephes_log(x) + x * f);
+     }
+   else if (x < 4.0)
+     {
+@@ -1027,36 +1027,36 @@
+   */
+       w = 1.0/x;
+       f = polevl(w,A6,7) / p1evl(w,B6,7);
+-      return (exp(x) * w * (1.0 + w * f));
++      return (cephes_exp(x) * w * (1.0 + w * f));
+     }
+   else if (x < 8.0)
+     {
+       w = 1.0/x;
+       f = polevl(w,A5,7) / p1evl(w,B5,8);
+-      return (exp(x) * w * (1.0 + w * f));
++      return (cephes_exp(x) * w * (1.0 + w * f));
+     }
+   else if (x < 16.0)
+     {
+       w = 1.0/x;
+       f = polevl(w,A2,9) / p1evl(w,B2,9);
+-      return (exp(x) * w * (1.0 + w * f));
++      return (cephes_exp(x) * w * (1.0 + w * f));
+     }
+   else if (x < 32.0)
+     {
+       w = 1.0/x;
+       f = polevl(w,A4,7) / p1evl(w,B4,8);
+-      return (exp(x) * w * (1.0 + w * f));
++      return (cephes_exp(x) * w * (1.0 + w * f));
+     }
+   else if (x < 64.0)
+     {
+       w = 1.0/x;
+       f = polevl(w,A7,5) / p1evl(w,B7,5);
+-      return (exp(x) * w * (1.0 + w * f));
++      return (cephes_exp(x) * w * (1.0 + w * f));
+     }
+   else
+     {
+       w = 1.0/x;
+       f = polevl(w,A3,8) / p1evl(w,B3,9);
+-      return (exp(x) * w * (1.0 + w * f));
++      return (cephes_exp(x) * w * (1.0 + w * f));
+     }
+ }
+--- Math-Cephes-0.36/libmd/expx2.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/expx2.c	2003-10-26 12:09:05.286066072 +0100
+@@ -38,13 +38,13 @@
+ #include "mconf.h"
+ 
+ #ifdef ANSIPROT
+-extern double fabs (double);
+-extern double floor (double);
+-extern double exp (double);
++extern double cephes_fabs (double);
++extern double cephes_floor (double);
++extern double cephes_exp (double);
+ #else
+-double fabs();
+-double floor();
+-double exp();
++double cephes_fabs();
++double cephes_floor();
++double cephes_exp();
+ #endif
+ 
+ #ifdef DEC
+@@ -64,14 +64,14 @@
+ {
+   double u, u1, m, f;
+ 
+-  x = fabs (x);
++  x = cephes_fabs (x);
+   if (sign < 0)
+     x = -x;
+ 
+   /* Represent x as an exact multiple of M plus a residual.
+      M is a power of 2 chosen so that exp(m * m) does not overflow
+      or underflow and so that |x - m| is small.  */
+-  m = MINV * floor(M * x + 0.5);
++  m = MINV * cephes_floor(M * x + 0.5);
+   f = x - m;
+ 
+   /* x^2 = m^2 + 2mf + f^2 */
+@@ -88,6 +88,6 @@
+     return (INFINITY);
+ 
+   /* u is exact, u1 is small.  */
+-  u = exp(u) * exp(u1);
++  u = cephes_exp(u) * cephes_exp(u1);
+   return(u);
+ }
+--- Math-Cephes-0.36/libmd/igam.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/igam.c	2003-10-26 12:38:46.593266216 +0100
+@@ -85,13 +85,13 @@
+ #include "mconf.h"
+ #ifdef ANSIPROT
+ extern double lgam ( double );
+-extern double exp ( double );
+-extern double log ( double );
+-extern double fabs ( double );
++extern double cephes_exp ( double );
++extern double cephes_log ( double );
++extern double cephes_fabs ( double );
+ extern double igam ( double, double );
+ extern double igamc ( double, double );
+ #else
+-double lgam(), exp(), log(), fabs(), igam(), igamc();
++double lgam(), cephes_exp(), cephes_log(), cephes_fabs(), igam(), igamc();
+ #endif
+ 
+ extern double MACHEP, MAXLOG;
+@@ -110,13 +110,13 @@
+ if( (x < 1.0) || (x < a) )
+ 	return( 1.0 - igam(a,x) );
+ 
+-ax = a * log(x) - x - lgam(a);
++ax = a * cephes_log(x) - x - lgam(a);
+ if( ax < -MAXLOG )
+ 	{
+ 	mtherr( "igamc", UNDERFLOW );
+ 	return( 0.0 );
+ 	}
+-ax = exp(ax);
++ax = cephes_exp(ax);
+ 
+ /* continued fraction */
+ y = 1.0 - a;
+@@ -139,7 +139,7 @@
+ 	if( qk != 0 )
+ 		{
+ 		r = pk/qk;
+-		t = fabs( (ans - r)/r );
++		t = cephes_fabs( (ans - r)/r );
+ 		ans = r;
+ 		}
+ 	else
+@@ -148,7 +148,7 @@
+ 	pkm1 = pk;
+ 	qkm2 = qkm1;
+ 	qkm1 = qk;
+-	if( fabs(pk) > big )
++	if( cephes_fabs(pk) > big )
+ 		{
+ 		pkm2 *= biginv;
+ 		pkm1 *= biginv;
+@@ -185,13 +185,13 @@
+ 	return( 1.0 - igamc(a,x) );
+ 
+ /* Compute  x**a * exp(-x) / gamma(a)  */
+-ax = a * log(x) - x - lgam(a);
++ax = a * cephes_log(x) - x - lgam(a);
+ if( ax < -MAXLOG )
+ 	{
+ 	mtherr( "igam", UNDERFLOW );
+ 	return( 0.0 );
+ 	}
+-ax = exp(ax);
++ax = cephes_exp(ax);
+ 
+ /* power series */
+ r = a;
+--- Math-Cephes-0.36/libmd/planck.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/planck.c	2003-10-26 14:47:06.791658128 +0100
+@@ -59,13 +59,13 @@
+ #include "mconf.h"
+ #ifdef ANSIPROT
+ extern double polylog (int, double);
+-extern double exp (double);
+-extern double log1p (double); /* log(1+x) */
+-extern double expm1 (double); /* exp(x) - 1 */
++extern double cephes_exp (double);
++extern double cephes_log1p (double); /* log(1+x) */
++extern double cephes_expm1 (double); /* exp(x) - 1 */
+ double planckc(double, double);
+ double plancki(double, double);
+ #else
+-double polylog(), exp(), log1p(), expm1();
++double polylog(), cephes_exp(), cephes_log1p(), cephes_expm1();
+ double planckc(), plancki();
+ #endif
+ 
+@@ -95,11 +95,11 @@
+       return y;
+     }
+ 
+-  h = exp(-planck_c2/(w*T));
++  h = cephes_exp(-planck_c2/(w*T));
+   y =      6. * polylog (4, h)  * bw;
+   y = (y + 6. * polylog (3, h)) * bw;
+   y = (y + 3. * polylog (2, h)) * bw;
+-  y = (y          - log1p (-h)) * bw;
++  y = (y          - cephes_log1p (-h)) * bw;
+   h = w * w;
+   h = h * h;
+   y = y * (planck_c1 / h);
+@@ -161,7 +161,7 @@
+   y = ((y + 3617./1081289781411840000.)*p - 1./5928123801600.)*p;
+   y = ((y + 691./78460462080000.)*p - 1./2075673600.)*p;
+   y = ((((y + 1./35481600.)*p - 1.0/544320.)*p + 1.0/6720.)*p -  1./40.)*p;
+-  y = y + log(d * expm1(u));
++  y = y + cephes_log(d * cephes_expm1(u));
+   y = y - 5.*u/8. + 1./3.;
+ #else
+   y = -236364091.*p/45733251691757079075225600000.;
+@@ -207,7 +207,7 @@
+ planckd(w, T)
+   double w, T;
+ {
+-   return (planck_c2 / ((w*w*w*w*w) * (exp(planck_c2/(w*T)) - 1.0)));
++   return (planck_c2 / ((w*w*w*w*w) * (cephes_exp(planck_c2/(w*T)) - 1.0)));
+ }
+ 
+ 
+--- Math-Cephes-0.36/libmd/rgamma.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/rgamma.c	2003-10-26 13:11:10.311776088 +0100
+@@ -138,12 +138,12 @@
+ 
+ #ifdef ANSIPROT
+ extern double chbevl ( double, void *, int );
+-extern double exp ( double );
+-extern double log ( double );
+-extern double sin ( double );
++extern double cephes_exp ( double );
++extern double cephes_log ( double );
++extern double cephes_sin ( double );
+ extern double lgam ( double );
+ #else
+-double chbevl(), exp(), log(), sin(), lgam();
++double chbevl(), cephes_exp(), cephes_log(), cephes_sin(), lgam();
+ #endif
+ extern double PI, MAXLOG, MAXNUM;
+ 
+@@ -162,7 +162,7 @@
+ if( x < -34.034 )
+ 	{
+ 	w = -x;
+-	z = sin( PI*w );
++	z = cephes_sin( PI*w );
+ 	if( z == 0.0 )
+ 		return(0.0);
+ 	if( z < 0.0 )
+@@ -173,7 +173,7 @@
+ 	else
+ 		sign = -1;
+ 
+-	y = log( w * z ) - log(PI) + lgam(w);
++	y = cephes_log( w * z ) - cephes_log(PI) + lgam(w);
+ 	if( y < -MAXLOG )
+ 		{
+ 		mtherr( name, UNDERFLOW );
+@@ -184,7 +184,7 @@
+ 		mtherr( name, OVERFLOW );
+ 		return( sign * MAXNUM );
+ 		}
+-	return( sign * exp(y));
++	return( sign * cephes_exp(y));
+ 	}
+ z = 1.0;
+ w = x;
+--- Math-Cephes-0.36/libmd/shichi.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/shichi.c	2003-10-26 12:42:28.627511880 +0100
+@@ -500,12 +500,12 @@
+ /* Sine and cosine integrals */
+ 
+ #ifdef ANSIPROT
+-extern double log ( double );
+-extern double exp ( double );
+-extern double fabs ( double );
++extern double cephes_log ( double );
++extern double cephes_exp ( double );
++extern double cephes_fabs ( double );
+ extern double chbevl ( double, void *, int );
+ #else
+-double log(), exp(), fabs(), chbevl();
++double cephes_log(), cephes_exp(), cephes_fabs(), chbevl();
+ #endif
+ #define EUL 0.57721566490153286061
+ extern double MACHEP, MAXNUM, PIO2;
+@@ -554,7 +554,7 @@
+ 	s += a/k;
+ 	k += 1.0;
+ 	}
+-while( fabs(a/s) > MACHEP );
++while( cephes_fabs(a/s) > MACHEP );
+ 
+ s *= x;
+ goto done;
+@@ -565,7 +565,7 @@
+ if( x < 18.0 )
+ 	{
+ 	a = (576.0/x - 52.0)/10.0;
+-	k = exp(x) / x;
++	k = cephes_exp(x) / x;
+ 	s = k * chbevl( a, S1, 22 );
+ 	c = k * chbevl( a, C1, 23 );
+ 	goto done;
+@@ -574,7 +574,7 @@
+ if( x <= 88.0 )
+ 	{
+ 	a = (6336.0/x - 212.0)/70.0;
+-	k = exp(x) / x;
++	k = cephes_exp(x) / x;
+ 	s = k * chbevl( a, S2, 23 );
+ 	c = k * chbevl( a, C2, 24 );
+ 	goto done;
+@@ -594,6 +594,6 @@
+ 
+ *si = s;
+ 
+-*ci = EUL + log(x) + c;
++*ci = EUL + cephes_log(x) + c;
+ return(0);
+ }
+--- Math-Cephes-0.36/libmd/sinh.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/sinh.c	2003-10-26 13:13:34.687827592 +0100
+@@ -99,16 +99,16 @@
+ #endif
+ 
+ #ifdef ANSIPROT
+-extern double fabs ( double );
+-extern double exp ( double );
++extern double cephes_fabs ( double );
++extern double cephes_exp ( double );
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+ #else
+-double fabs(), exp(), polevl(), p1evl();
++double cephes_fabs(), cephes_exp(), polevl(), p1evl();
+ #endif
+ extern double INFINITY, MINLOG, MAXLOG, LOGE2;
+ 
+-double sinh(x)
++double cephes_sinh(x)
+ double x;
+ {
+ double a;
+@@ -117,7 +117,7 @@
+ if( x == 0.0 )
+ 	return(x);
+ #endif
+-a = fabs(x);
++a = cephes_fabs(x);
+ if( (x > (MAXLOG + LOGE2)) || (x > -(MINLOG-LOGE2) ) )
+ 	{
+ 	mtherr( "sinh", DOMAIN );
+@@ -130,13 +130,13 @@
+ 	{
+ 	if( a >= (MAXLOG - LOGE2) )
+ 		{
+-		a = exp(0.5*a);
++		a = cephes_exp(0.5*a);
+ 		a = (0.5 * a) * a;
+ 		if( x < 0 )
+ 			a = -a;
+ 		return(a);
+ 		}
+-	a = exp(a);
++	a = cephes_exp(a);
+ 	a = 0.5*a - (0.5/a);
+ 	if( x < 0 )
+ 		a = -a;
+--- Math-Cephes-0.36/libmd/tanh.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/tanh.c	2003-10-26 14:43:30.704508368 +0100
+@@ -95,16 +95,16 @@
+ #endif
+ 
+ #ifdef ANSIPROT
+-extern double fabs ( double );
+-extern double exp ( double );
++extern double cephes_fabs ( double );
++extern double cephes_exp ( double );
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+ #else
+-double fabs(), exp(), polevl(), p1evl();
++double cephes_fabs(), cephes_exp(), polevl(), p1evl();
+ #endif
+ extern double MAXLOG;
+ 
+-double tanh(x)
++double cephes_tanh(x)
+ double x;
+ {
+ double s, z;
+@@ -113,7 +113,7 @@
+ if( x == 0.0 )
+ 	return(x);
+ #endif
+-z = fabs(x);
++z = cephes_fabs(x);
+ if( z > 0.5 * MAXLOG )
+ 	{
+ 	if( x > 0 )
+@@ -123,7 +123,7 @@
+ 	}
+ if( z >= 0.625 )
+ 	{
+-	s = exp(2.0*z);
++	s = cephes_exp(2.0*z);
+ 	z =  1.0  - 2.0/(s + 1.0);
+ 	if( x < 0 )
+ 		z = -z;
+--- Math-Cephes-0.36/libmd/unity.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/unity.c	2003-10-26 14:46:29.562317848 +0100
+@@ -14,13 +14,13 @@
+ #ifdef ANSIPROT
+ extern int isnan (double);
+ extern int isfinite (double);
+-extern double log ( double );
++extern double cephes_log ( double );
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+-extern double exp ( double );
+-extern double cos ( double );
++extern double cephes_exp ( double );
++extern double cephes_cos ( double );
+ #else
+-double log(), polevl(), p1evl(), exp(), cos();
++double cephes_log(), polevl(), p1evl(), cephes_exp(), cephes_cos();
+ int isnan(), isfinite();
+ #endif
+ extern double INFINITY;
+@@ -53,14 +53,14 @@
+ #define SQRTH 0.70710678118654752440
+ #define SQRT2 1.41421356237309504880
+ 
+-double log1p(x)
++double cephes_log1p(x)
+ double x;
+ {
+ double z;
+ 
+ z = 1.0 + x;
+ if( (z < SQRTH) || (z > SQRT2) )
+-	return( log(z) );
++	return( cephes_log(z) );
+ z = x*x;
+ z = -0.5 * z + x * ( z * polevl( x, LP, 6 ) / p1evl( x, LQ, 6 ) );
+ return (x + z);
+@@ -86,7 +86,7 @@
+  2.0000000000000000000897E0,
+ };
+ 
+-double expm1(x)
++double cephes_expm1(x)
+ double x;
+ {
+ double r, xx;
+@@ -102,7 +102,7 @@
+ 	return(-1.0);
+ #endif
+ if( (x < -0.5) || (x > 0.5) )
+-	return( exp(x) - 1.0 );
++	return( cephes_exp(x) - 1.0 );
+ xx = x * x;
+ r = x * polevl( xx, EP, 2 );
+ r = r/( polevl( xx, EQ, 3 ) - r );
+@@ -131,7 +131,7 @@
+ double xx;
+ 
+ if( (x < -PIO4) || (x > PIO4) )
+-	return( cos(x) - 1.0 );
++	return( cephes_cos(x) - 1.0 );
+ xx = x * x;
+ xx = -0.5*xx + xx * xx * polevl( xx, coscof, 6 );
+ return xx;
+--- Math-Cephes-0.36/libmd/exp2.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/exp2.c	2003-10-26 12:16:43.176456152 +0100
+@@ -121,12 +121,12 @@
+ #ifdef ANSIPROT
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+-extern double floor ( double );
+-extern double ldexp ( double, int );
++extern double cephes_floor ( double );
++extern double cephes_ldexp ( double, int );
+ extern int isnan ( double );
+ extern int isfinite ( double );
+ #else
+-double polevl(), p1evl(), floor(), ldexp();
++double polevl(), p1evl(), cephes_floor(), cephes_ldexp();
+ int isnan(), isfinite();
+ #endif
+ #ifdef INFINITIES
+@@ -134,7 +134,7 @@
+ #endif
+ extern double MAXNUM;
+ 
+-double exp2(x)
++double cephes_exp2(x)
+ double x;
+ {
+ double px, xx;
+@@ -164,7 +164,7 @@
+ 
+ xx = x;	/* save x */
+ /* separate into integer and fractional parts */
+-px = floor(x+0.5);
++px = cephes_floor(x+0.5);
+ n = px;
+ x = x - px;
+ 
+@@ -175,9 +175,9 @@
+ xx = x * x;
+ px = x * polevl( xx, P, 2 );
+ x =  px / ( p1evl( xx, Q, 2 ) - px );
+-x = 1.0 + ldexp( x, 1 );
++x = 1.0 + cephes_ldexp( x, 1 );
+ 
+ /* scale by power of 2 */
+-x = ldexp( x, n );
++x = cephes_ldexp( x, n );
+ return(x);
+ }
+--- Math-Cephes-0.36/libmd/fabs.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/fabs.c	2003-10-26 11:49:40.830090288 +0100
+@@ -29,7 +29,7 @@
+ #endif
+ #endif
+ 
+-double fabs(x)
++double cephes_fabs(x)
+ double x;
+ {
+ union
+--- Math-Cephes-0.36/libmd/bernum_wrap.c.orig	2002-08-23 17:23:08.000000000 +0200
++++ Math-Cephes-0.36/libmd/bernum_wrap.c	2003-10-26 12:45:44.235774904 +0100
+@@ -14,10 +14,10 @@
+ */
+ #include "mconf.h"
+ #ifdef ANSIPROT
+-extern double fabs ( double );
+-extern double log10 ( double );
++extern double cephes_fabs ( double );
++extern double cephes_log10 ( double );
+ #else
+-double fabs(), log10();
++double cephes_fabs(), cephes_log10();
+ #endif
+ extern double MACHEP;
+ 
+--- Math-Cephes-0.36/libmd/euclid.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/euclid.c	2003-10-26 12:08:09.898486264 +0100
+@@ -28,11 +28,11 @@
+ 
+ #include "mconf.h"
+ #ifdef ANSIPROT
+-extern double fabs ( double );
+-extern double floor ( double );
++extern double cephes_fabs ( double );
++extern double cephes_floor ( double );
+ double euclid( double *, double * );
+ #else
+-double fabs(), floor(), euclid();
++double cephes_fabs(), cephes_floor(), euclid();
+ #endif
+ 
+ extern double MACHEP;
+@@ -136,7 +136,7 @@
+ ff3->n = n1 * n2;
+ ff3->d = d1 * d2;
+ /* Report overflow. */
+-if( (fabs(ff3->n) >= BIG) || (fabs(ff3->d) >= BIG) )
++if( (cephes_fabs(ff3->n) >= BIG) || (cephes_fabs(ff3->d) >= BIG) )
+ 	{
+ 	mtherr( "rmul", OVERFLOW );
+ 	return;
+@@ -174,7 +174,7 @@
+ ff3->n = n1 * n2;
+ ff3->d = d1 * d2;
+ /* Report overflow. */
+-if( (fabs(ff3->n) >= BIG) || (fabs(ff3->d) >= BIG) )
++if( (cephes_fabs(ff3->n) >= BIG) || (cephes_fabs(ff3->d) >= BIG) )
+ 	{
+ 	mtherr( "rdiv", OVERFLOW );
+ 	return;
+@@ -233,7 +233,7 @@
+ while( d > 0.5 )
+ 	{
+ /* Find integer part of n divided by d. */
+-	q = floor( n/d );
++	q = cephes_floor( n/d );
+ /* Find remainder after dividing n by d. */
+ 	r = n - d * q;
+ /* The next fraction is d/r. */
+--- Math-Cephes-0.36/libmd/fresnl.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/fresnl.c	2003-10-26 13:08:27.318554824 +0100
+@@ -446,13 +446,13 @@
+ #endif
+ 
+ #ifdef ANSIPROT
+-extern double fabs ( double );
+-extern double cos ( double );
+-extern double sin ( double );
++extern double cephes_fabs ( double );
++extern double cephes_cos ( double );
++extern double cephes_sin ( double );
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+ #else
+-double fabs(), cos(), sin(), polevl(), p1evl();
++double cephes_fabs(), cephes_cos(), cephes_sin(), polevl(), p1evl();
+ #endif
+ extern double PI, PIO2, MACHEP;
+ 
+@@ -462,7 +462,7 @@
+ double f, g, cc, ss, c, s, t, u;
+ double x, x2;
+ 
+-x = fabs(xxa);
++x = cephes_fabs(xxa);
+ x2 = x * x;
+ if( x2 < 2.5625 )
+ 	{
+@@ -496,8 +496,8 @@
+ 	g = t * polevl( u, gn, 10)/p1evl(u, gd, 11);
+ 
+ 	t = PIO2 * x2;
+-	c = cos(t);
+-	s = sin(t);
++	c = cephes_cos(t);
++	s = cephes_sin(t);
+ 	t = PI * x;
+ 	cc = 0.5  +  (f * s  -  g * c)/t;
+ 	ss = 0.5  -  (f * c  +  g * s)/t;
+--- Math-Cephes-0.36/libmd/jn.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/jn.c	2003-10-26 12:30:07.402195256 +0100
+@@ -47,15 +47,15 @@
+ */
+ #include "mconf.h"
+ #ifdef ANSIPROT
+-extern double fabs ( double );
+-extern double j0 ( double );
+-extern double j1 ( double );
++extern double cephes_fabs ( double );
++extern double cephes_j0 ( double );
++extern double cephes_j1 ( double );
+ #else
+-double fabs(), j0(), j1();
++double cephes_fabs(), cephes_j0(), cephes_j1();
+ #endif
+ extern double MACHEP;
+ 
+-double jn( n, x )
++double cephes_jn( n, x )
+ int n;
+ double x;
+ {
+@@ -81,11 +81,11 @@
+ 	}
+ 
+ if( n == 0 )
+-	return( sign * j0(x) );
++	return( sign * cephes_j0(x) );
+ if( n == 1 )
+-	return( sign * j1(x) );
++	return( sign * cephes_j1(x) );
+ if( n == 2 )
+-	return( sign * (2.0 * j1(x) / x  -  j0(x)) );
++	return( sign * (2.0 * cephes_j1(x) / x  -  cephes_j0(x)) );
+ 
+ if( x < MACHEP )
+ 	return( 0.0 );
+@@ -125,9 +125,9 @@
+ 	}
+ while( --k > 0 );
+ 
+-if( fabs(pk) > fabs(pkm1) )
+-	ans = j1(x)/pk;
++if( cephes_fabs(pk) > cephes_fabs(pkm1) )
++	ans = cephes_j1(x)/pk;
+ else
+-	ans = j0(x)/pkm1;
++	ans = cephes_j0(x)/pkm1;
+ return( sign * ans );
+ }
+--- Math-Cephes-0.36/libmd/polrt.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/polrt.c	2003-10-26 11:59:47.690833432 +0100
+@@ -54,9 +54,9 @@
+ 	}cmplx;
+ */
+ #ifdef ANSIPROT
+-extern double fabs ( double );
++extern double cephes_fabs ( double );
+ #else
+-double fabs();
++double cephes_fabs();
+ #endif
+ 
+ int polrt( xcof, cof, m, root )
+@@ -151,7 +151,7 @@
+ x.r += dx.r;
+ dx.i = -(u.r * ud.i  +  u.i * ud.r)/mag;
+ x.i += dx.i;
+-if( (fabs(dx.i) + fabs(dx.r)) < 1.0e-6 )
++if( (cephes_fabs(dx.i) + cephes_fabs(dx.r)) < 1.0e-6 )
+ 	goto lupdon;
+ iter += 1;
+ }	/* while iter < 500 */
+@@ -179,7 +179,7 @@
+ if( !final )
+ 	{
+ 	final = 1;
+-	if( fabs(x.i/x.r) < 1.0e-4 )
++	if( cephes_fabs(x.i/x.r) < 1.0e-4 )
+ 		x.i = 0.0;
+ 	xsav.r = x.r;
+ 	xsav.i = x.i;
+@@ -188,7 +188,7 @@
+ 
+ findon:
+ final = 0;
+-if( fabs(x.i/x.r) >= 1.0e-5 )
++if( cephes_fabs(x.i/x.r) >= 1.0e-5 )
+ 	{
+ 	cofj = x.r + x.r;
+ 	mag = x.r * x.r  +  x.i * x.i;
+--- Math-Cephes-0.36/libmd/polylog.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/polylog.c	2003-10-26 13:00:56.684061680 +0100
+@@ -210,17 +210,17 @@
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+ extern double zetac ( double );
+-extern double pow ( double, double );
++extern double cephes_pow ( double, double );
+ extern double powi ( double, int );
+-extern double log ( double );
++extern double cephes_log ( double );
+ extern double fac ( int i );
+-extern double fabs (double);
++extern double cephes_fabs (double);
+ double polylog (int, double);
+ #else
+ extern double spence(), polevl(), p1evl(), zetac();
+-extern double pow(), powi(), log();
++extern double cephes_pow(), powi(), cephes_log();
+ extern double fac(); /* factorial */
+-extern double fabs();
++extern double cephes_fabs();
+ double polylog();
+ #endif
+ extern double MACHEP;
+@@ -265,7 +265,7 @@
+ 
+   if (n == 1)
+     {
+-      s = -log (1.0 - x);
++      s = -cephes_log (1.0 - x);
+       return s;
+     }
+ 
+@@ -301,7 +301,7 @@
+       double q, w;
+       int r;
+ 
+-      w = log (-x);
++      w = cephes_log (-x);
+       s = 0.0;
+       for (r = 1; r <= n / 2; r++)
+ 	{
+@@ -314,7 +314,7 @@
+ 	      break;
+ 	    }
+ 	  q = (double) j;
+-	  q = pow (w, q) * p / fac (j);
++	  q = cephes_pow (w, q) * p / fac (j);
+ 	  s = s + q;
+ 	}
+       s = 2.0 * s;
+@@ -322,7 +322,7 @@
+       if (n & 1)
+ 	q = -q;
+       s = s - q;
+-      s = s - pow (w, (double) n) / fac (n);
++      s = s - cephes_pow (w, (double) n) / fac (n);
+       return s;
+     }
+ 
+@@ -349,10 +349,10 @@
+       p = x * x * x;
+       if (x > 0.8)
+ 	{
+-	  u = log(x);
++	  u = cephes_log(x);
+ 	  s = p / 6.0;
+ 	  xc = 1.0 - x;
+-	  s = s - 0.5 * u * u * log(xc);
++	  s = s - 0.5 * u * u * cephes_log(xc);
+           s = s + PI * PI * u / 6.0;
+           s = s - polylog (3, -xc/x);
+ 	  s = s - polylog (3, xc);
+@@ -374,7 +374,7 @@
+ 	  s = s + h;
+ 	  k += 1.0;
+ 	}
+-      while (fabs(h/s) > 1.1e-16);
++      while (cephes_fabs(h/s) > 1.1e-16);
+       return (s + t);
+     }
+ 
+@@ -418,8 +418,8 @@
+                               k=1
+   */
+ 
+-  z = log(x);
+-  h = -log(-z);
++  z = cephes_log(x);
++  h = -cephes_log(-z);
+   for (i = 1; i < n; i++)
+     h = h + 1.0/i;
+   p = 1.0;
+@@ -440,7 +440,7 @@
+       h = (zetac((double)(n-j)) + 1.0);
+       h = h * p;
+       s = s + h;
+-      if (fabs(h/s) < MACHEP)
++      if (cephes_fabs(h/s) < MACHEP)
+ 	break;
+       j += 2;
+     }
+@@ -459,7 +459,7 @@
+       h = p / powi(k, n);
+       s = s + h;
+     }
+-  while (fabs(h/s) > MACHEP);
++  while (cephes_fabs(h/s) > MACHEP);
+   s += x * x * x / powi(3.0,n);
+   s += x * x / powi(2.0,n);
+   s += x;
+--- Math-Cephes-0.36/libmd/pow.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/pow.c	2003-10-26 12:57:09.907536952 +0100
+@@ -335,10 +335,10 @@
+ #define Hb Wb
+ 
+ #ifdef ANSIPROT
+-extern double floor ( double );
+-extern double fabs ( double );
+-extern double frexp ( double, int * );
+-extern double ldexp ( double, int );
++extern double cephes_floor ( double );
++extern double cephes_fabs ( double );
++extern double cephes_frexp ( double, int * );
++extern double cephes_ldexp ( double, int );
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+ extern double powi ( double, int );
+@@ -347,7 +347,7 @@
+ extern int isfinite ( double );
+ static double reduc ( double );
+ #else
+-double floor(), fabs(), frexp(), ldexp();
++double cephes_floor(), cephes_fabs(), cephes_frexp(), cephes_ldexp();
+ double polevl(), p1evl(), powi();
+ int signbit(), isnan(), isfinite();
+ static double reduc();
+@@ -363,7 +363,7 @@
+ extern double NEGZERO;
+ #endif
+ 
+-double pow( x, y )
++double cephes_pow( x, y )
+ double x, y;
+ {
+ double w, z, W, Wa, Wb, ya, yb, u;
+@@ -454,7 +454,7 @@
+ 	}
+ /* Set iyflg to 1 if y is an integer.  */
+ iyflg = 0;
+-w = floor(y);
++w = cephes_floor(y);
+ if( w == y )
+ 	iyflg = 1;
+ 
+@@ -462,9 +462,9 @@
+ yoddint = 0;
+ if( iyflg )
+ 	{
+-	ya = fabs(y);
+-	ya = floor(0.5 * ya);
+-	yb = 0.5 * fabs(w);
++	ya = cephes_fabs(y);
++	ya = cephes_floor(0.5 * ya);
++	yb = 0.5 * cephes_fabs(w);
+ 	if( ya != yb )
+ 		yoddint = 1;
+ 	}
+@@ -540,8 +540,8 @@
+ if( iyflg )
+ 	{
+ 	i = w;
+-	w = floor(x);
+-	if( (w == x) && (fabs(y) < 32768.0) )
++	w = cephes_floor(x);
++	if( (w == x) && (cephes_fabs(y) < 32768.0) )
+ 		{
+ 		w = powi( x, (int) y );
+ 		return( w );
+@@ -549,14 +549,14 @@
+ 	}
+ 
+ if( nflg )
+-	x = fabs(x);
++	x = cephes_fabs(x);
+ 
+ /* For results close to 1, use a series expansion.  */
+ w = x - 1.0;
+-aw = fabs(w);
+-ay = fabs(y);
++aw = cephes_fabs(w);
++ay = cephes_fabs(y);
+ wy = w * y;
+-ya = fabs(wy);
++ya = cephes_fabs(wy);
+ if((aw <= 1.0e-3 && ay <= 1.0)
+    || (ya <= 1.0e-3 && ay >= 1.0))
+ 	{
+@@ -566,8 +566,8 @@
+ 	}
+ /* These are probably too much trouble.  */
+ #if 0
+-w = y * log(x);
+-if (aw > 1.0e-3 && fabs(w) < 1.0e-3)
++w = y * cephes_log(x);
++if (aw > 1.0e-3 && cephes_fabs(w) < 1.0e-3)
+   {
+     z = ((((((
+     w/7. + 1.)*w/6. + 1.)*w/5. + 1.)*w/4. + 1.)*w/3. + 1.)*w/2. + 1.)*w + 1.;
+@@ -589,7 +589,7 @@
+ #endif
+ 
+ /* separate significand from exponent */
+-x = frexp( x, &e );
++x = cephes_frexp( x, &e );
+ 
+ #if 0
+ /* For debugging, check for gross overflow. */
+@@ -628,7 +628,7 @@
+  */
+ z = x*x;
+ w = x * ( z * polevl( x, P, 3 ) / p1evl( x, Q, 4 ) );
+-w = w - ldexp( z, -1 );   /*  w - 0.5 * z  */
++w = w - cephes_ldexp( z, -1 );   /*  w - 0.5 * z  */
+ 
+ /* Convert to base 2 logarithm:
+  * multiply by log2(e)
+@@ -644,7 +644,7 @@
+ 
+ /* Compute exponent term of the base 2 logarithm. */
+ w = -i;
+-w = ldexp( w, -4 );	/* divide by 16 */
++w = cephes_ldexp( w, -4 );	/* divide by 16 */
+ w += e;
+ /* Now base 2 log of x is w + z. */
+ 
+@@ -667,7 +667,7 @@
+ 
+ H = Fb + Gb;
+ Ha = reduc(H);
+-w = ldexp( Ga+Ha, 4 );
++w = cephes_ldexp( Ga+Ha, 4 );
+ 
+ /* Test the power of 2 for overflow */
+ if( w > MEXP )
+@@ -725,7 +725,7 @@
+ e = 16*i - e;
+ w = douba( e );
+ z = w + w * z;      /*    2**-e * ( 1 + (2**Hb-1) )    */
+-z = ldexp( z, i );  /* multiply by integer power of 2 */
++z = cephes_ldexp( z, i );  /* multiply by integer power of 2 */
+ 
+ done:
+ 
+@@ -749,8 +749,8 @@
+ {
+ double t;
+ 
+-t = ldexp( x, 4 );
+-t = floor( t );
+-t = ldexp( t, -4 );
++t = cephes_ldexp( x, 4 );
++t = cephes_floor( t );
++t = cephes_ldexp( t, -4 );
+ return(t);
+ }
+--- Math-Cephes-0.36/libmd/spence.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/spence.c	2003-10-26 12:43:08.298480976 +0100
+@@ -140,11 +140,11 @@
+ #endif
+ 
+ #ifdef ANSIPROT
+-extern double fabs ( double );
+-extern double log ( double );
++extern double cephes_fabs ( double );
++extern double cephes_log ( double );
+ extern double polevl ( double, void *, int );
+ #else
+-double fabs(), log(), polevl();
++double cephes_fabs(), cephes_log(), polevl();
+ #endif
+ extern double PI, MACHEP;
+ 
+@@ -193,11 +193,11 @@
+ y = -w * polevl( w, A, 7) / polevl( w, B, 7 );
+ 
+ if( flag & 1 )
+-	y = (PI * PI)/6.0  - log(x) * log(1.0-x) - y;
++	y = (PI * PI)/6.0  - cephes_log(x) * cephes_log(1.0-x) - y;
+ 
+ if( flag & 2 )
+ 	{
+-	z = log(x);
++	z = cephes_log(x);
+ 	y = -0.5 * z * z  -  y;
+ 	}
+ 
+--- Math-Cephes-0.36/libmd/zeta.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/zeta.c	2003-10-26 13:01:35.165211656 +0100
+@@ -61,11 +61,11 @@
+ 
+ #include "mconf.h"
+ #ifdef ANSIPROT
+-extern double fabs ( double );
+-extern double pow ( double, double );
+-extern double floor ( double );
++extern double cephes_fabs ( double );
++extern double cephes_pow ( double, double );
++extern double cephes_floor ( double );
+ #else
+-double fabs(), pow(), floor();
++double cephes_fabs(), cephes_pow(), cephes_floor();
+ #endif
+ extern double MAXNUM, MACHEP;
+ 
+@@ -109,13 +109,13 @@
+ 
+ if( q <= 0.0 )
+ 	{
+-	if(q == floor(q))
++	if(q == cephes_floor(q))
+ 		{
+ 		mtherr( "zeta", SING );
+ retinf:
+ 		return( MAXNUM );
+ 		}
+-	if( x != floor(x) )
++	if( x != cephes_floor(x) )
+ 		goto domerr; /* because q^-x not defined */
+ 	}
+ 
+@@ -129,7 +129,7 @@
+  * If q<0 and x is an integer, there is a relation to
+  * the polygamma function.
+  */
+-s = pow( q, -x );
++s = cephes_pow( q, -x );
+ a = q;
+ i = 0;
+ b = 0.0;
+@@ -137,9 +137,9 @@
+ 	{
+ 	i += 1;
+ 	a += 1.0;
+-	b = pow( a, -x );
++	b = cephes_pow( a, -x );
+ 	s += b;
+-	if( fabs(b/s) < MACHEP )
++	if( cephes_fabs(b/s) < MACHEP )
+ 		goto done;
+ 	}
+ 
+@@ -154,7 +154,7 @@
+ 	b /= w;
+ 	t = a*b/A[i];
+ 	s = s + t;
+-	t = fabs(t/s);
++	t = cephes_fabs(t/s);
+ 	if( t < MACHEP )
+ 		goto done;
+ 	k += 1.0;
+@@ -172,17 +172,17 @@
+ /*
+ pseres:
+ 
+-s = pow( q, -x );
++s = cephes_pow( q, -x );
+ a = q;
+ do
+ 	{
+ 	a += 2.0;
+-	b = pow( a, -x );
++	b = cephes_pow( a, -x );
+ 	s += b;
+ 	}
+ while( b/s > MACHEP );
+ 
+-b = pow( 2.0, -x );
++b = cephes_pow( 2.0, -x );
+ s = (s + b)/(1.0-b);
+ return(s);
+ */
+--- Math-Cephes-0.36/libmd/floor.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/floor.c	2003-10-26 12:14:35.251903640 +0100
+@@ -96,17 +96,17 @@
+ 
+ extern double MAXNUM, NEGZERO;
+ #ifdef ANSIPROT
+-double floor ( double );
++double cephes_floor ( double );
+ int isnan ( double );
+ int isfinite ( double );
+-double ldexp ( double, int );
++double cephes_ldexp ( double, int );
+ #else
+-double floor();
++double cephes_floor();
+ int isnan(), isfinite();
+-double ldexp();
++double cephes_ldexp();
+ #endif
+ 
+-double ceil(x)
++double cephes_ceil(x)
+ double x;
+ {
+ double y;
+@@ -124,7 +124,7 @@
+ 	return(x);
+ #endif
+ 
+-y = floor(x);
++y = cephes_floor(x);
+ if( y < x )
+ 	y += 1.0;
+ #ifdef MINUSZERO
+@@ -163,7 +163,7 @@
+ 
+ 
+ 
+-double floor(x)
++double cephes_floor(x)
+ double x;
+ {
+ union
+@@ -249,7 +249,7 @@
+ 
+ 
+ 
+-double frexp( x, pw2 )
++double cephes_frexp( x, pw2 )
+ double x;
+ int *pw2;
+ {
+@@ -356,7 +356,7 @@
+ 
+ 
+ 
+-double ldexp( x, pw2 )
++double cephes_ldexp( x, pw2 )
+ double x;
+ int pw2;
+ {
+@@ -433,7 +433,7 @@
+ 	/* For denormals, significant bits may be lost even
+ 	   when dividing by 2.  Construct 2^-(1-e) so the result
+ 	   is obtained with only one multiplication.  */
+-	u.y *= ldexp(1.0, e-1);
++	u.y *= cephes_ldexp(1.0, e-1);
+ 	return(u.y);
+ #else
+ 	return(0.0);
+--- Math-Cephes-0.36/libmd/exp.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/exp.c	2003-10-26 12:16:29.565525328 +0100
+@@ -138,12 +138,12 @@
+ #ifdef ANSIPROT
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+-extern double floor ( double );
+-extern double ldexp ( double, int );
++extern double cephes_floor ( double );
++extern double cephes_ldexp ( double, int );
+ extern int isnan ( double );
+ extern int isfinite ( double );
+ #else
+-double polevl(), p1evl(), floor(), ldexp();
++double polevl(), p1evl(), cephes_floor(), cephes_ldexp();
+ int isnan(), isfinite();
+ #endif
+ extern double LOGE2, LOG2E, MAXLOG, MINLOG, MAXNUM;
+@@ -151,7 +151,7 @@
+ extern double INFINITY;
+ #endif
+ 
+-double exp(x)
++double cephes_exp(x)
+ double x;
+ {
+ double px, xx;
+@@ -183,7 +183,7 @@
+  *   = e**g e**( n loge(2) )
+  *   = e**( g + n loge(2) )
+  */
+-px = floor( LOG2E * x + 0.5 ); /* floor() truncates toward -infinity. */
++px = cephes_floor( LOG2E * x + 0.5 ); /* floor() truncates toward -infinity. */
+ n = px;
+ x -= px * C1;
+ x -= px * C2;
+@@ -198,6 +198,6 @@
+ x = 1.0 + 2.0 * x;
+ 
+ /* multiply by power of 2 */
+-x = ldexp( x, n );
++x = cephes_ldexp( x, n );
+ return(x);
+ }
+--- Math-Cephes-0.36/libmd/exp10.c.orig	2003-10-26 11:47:34.000000000 +0100
++++ Math-Cephes-0.36/libmd/exp10.c	2003-10-26 12:16:36.669445368 +0100
+@@ -155,14 +155,14 @@
+ #endif
+ 
+ #ifdef ANSIPROT
+-extern double floor ( double );
+-extern double ldexp ( double, int );
++extern double cephes_floor ( double );
++extern double cephes_ldexp ( double, int );
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+ extern int isnan ( double );
+ extern int isfinite ( double );
+ #else
+-double floor(), ldexp(), polevl(), p1evl();
++double cephes_floor(), cephes_ldexp(), polevl(), p1evl();
+ int isnan(), isfinite();
+ #endif
+ extern double MAXNUM;
+@@ -170,7 +170,7 @@
+ extern double INFINITY;
+ #endif
+ 
+-double exp10(x)
++double cephes_exp10(x)
+ double x;
+ {
+ double px, xx;
+@@ -202,7 +202,7 @@
+  *   = 10**g 10**( n log10(2) )
+  *   = 10**( g + n log10(2) )
+  */
+-px = floor( LOG210 * x + 0.5 );
++px = cephes_floor( LOG210 * x + 0.5 );
+ n = px;
+ x -= px * LG102A;
+ x -= px * LG102B;
+@@ -214,10 +214,10 @@
+ xx = x * x;
+ px = x * polevl( xx, P, 3 );
+ x =  px/( p1evl( xx, Q, 3 ) - px );
+-x = 1.0 + ldexp( x, 1 );
++x = 1.0 + cephes_ldexp( x, 1 );
+ 
+ /* multiply by power of 2 */
+-x = ldexp( x, n );
++x = cephes_ldexp( x, n );
+ 
+ return(x);
+ }
+--- Math-Cephes-0.36/libmd/psi.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/psi.c	2003-10-26 14:42:42.264872312 +0100
+@@ -109,12 +109,12 @@
+ #define EUL 0.57721566490153286061
+ 
+ #ifdef ANSIPROT
+-extern double floor ( double );
+-extern double log ( double );
+-extern double tan ( double );
++extern double cephes_floor ( double );
++extern double cephes_log ( double );
++extern double cephes_tan ( double );
+ extern double polevl ( double, void *, int );
+ #else
+-double floor(), log(), tan(), polevl();
++double cephes_floor(), cephes_log(), cephes_tan(), polevl();
+ #endif
+ extern double PI, MAXNUM;
+ 
+@@ -132,7 +132,7 @@
+ 	{
+ 	negative = 1;
+ 	q = x;
+-	p = floor(q);
++	p = cephes_floor(q);
+ 	if( p == q )
+ 		{
+ 		mtherr( "psi", SING );
+@@ -149,7 +149,7 @@
+ 			p += 1.0;
+ 			nz = q - p;
+ 			}
+-		nz = PI/tan(PI*nz);
++		nz = PI/cephes_tan(PI*nz);
+ 		}
+ 	else
+ 		{
+@@ -159,7 +159,7 @@
+ 	}
+ 
+ /* check for positive integer up to 10 */
+-if( (x <= 10.0) && (x == floor(x)) )
++if( (x <= 10.0) && (x == cephes_floor(x)) )
+ 	{
+ 	y = 0.0;
+ 	n = x;
+@@ -188,7 +188,7 @@
+ else
+ 	y = 0.0;
+ 
+-y = log(s)  -  (0.5/s)  -  y  -  w;
++y = cephes_log(s)  -  (0.5/s)  -  y  -  w;
+ 
+ done:
+ 
+--- Math-Cephes-0.36/libmd/round.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/round.c	2003-10-26 13:02:39.588417840 +0100
+@@ -34,18 +34,18 @@
+ */
+ #include "mconf.h"
+ #ifdef ANSIPROT
+-double floor ( double );
++double cephes_floor ( double );
+ #else
+-double floor();
++double cephes_floor();
+ #endif
+ 
+-double round(x)
++double cephes_round(x)
+ double x;
+ {
+ double y, r;
+ 
+ /* Largest integer <= x */
+-y = floor(x);
++y = cephes_floor(x);
+ 
+ /* Fractional part */
+ r = x - y;
+@@ -57,7 +57,7 @@
+ /* Round to even */
+ if( r == 0.5 )
+ 	{
+-	r = y - 2.0 * floor( 0.5 * y );
++	r = y - 2.0 * cephes_floor( 0.5 * y );
+ 	if( r == 1.0 )
+ 		{
+ rndup:
+--- Math-Cephes-0.36/libmd/sin.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/sin.c	2003-10-26 13:05:20.515953136 +0100
+@@ -196,12 +196,12 @@
+ #ifdef ANSIPROT
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+-extern double floor ( double );
+-extern double ldexp ( double, int );
++extern double cephes_floor ( double );
++extern double cephes_ldexp ( double, int );
+ extern int isnan ( double );
+ extern int isfinite ( double );
+ #else
+-double polevl(), floor(), ldexp();
++double polevl(), cephes_floor(), cephes_ldexp();
+ int isnan(), isfinite();
+ #endif
+ extern double PIO4;
+@@ -214,7 +214,7 @@
+ #endif
+ 
+ 
+-double sin(x)
++double cephes_sin(x)
+ double x;
+ {
+ double y, z, zz;
+@@ -247,12 +247,12 @@
+ 	return(0.0);
+ 	}
+ 
+-y = floor( x/PIO4 ); /* integer part of x/PIO4 */
++y = cephes_floor( x/PIO4 ); /* integer part of x/PIO4 */
+ 
+ /* strip high bits of integer part to prevent integer overflow */
+-z = ldexp( y, -4 );
+-z = floor(z);           /* integer part of y/8 */
+-z = y - ldexp( z, 4 );  /* y - 16 * (y/16) */
++z = cephes_ldexp( y, -4 );
++z = cephes_floor(z);           /* integer part of y/8 */
++z = y - cephes_ldexp( z, 4 );  /* y - 16 * (y/16) */
+ 
+ j = z; /* convert to integer for tests on the phase angle */
+ /* map zeros to origin */
+@@ -276,7 +276,7 @@
+ 
+ if( (j==1) || (j==2) )
+ 	{
+-	y = 1.0 - ldexp(zz,-1) + zz * zz * polevl( zz, coscof, 5 );
++	y = 1.0 - cephes_ldexp(zz,-1) + zz * zz * polevl( zz, coscof, 5 );
+ 	}
+ else
+ 	{
+@@ -294,7 +294,7 @@
+ 
+ 
+ 
+-double cos(x)
++double cephes_cos(x)
+ double x;
+ {
+ double y, z, zz;
+@@ -322,10 +322,10 @@
+ 	return(0.0);
+ 	}
+ 
+-y = floor( x/PIO4 );
+-z = ldexp( y, -4 );
+-z = floor(z);		/* integer part of y/8 */
+-z = y - ldexp( z, 4 );  /* y - 16 * (y/16) */
++y = cephes_floor( x/PIO4 );
++z = cephes_ldexp( y, -4 );
++z = cephes_floor(z);		/* integer part of y/8 */
++z = y - cephes_ldexp( z, 4 );  /* y - 16 * (y/16) */
+ 
+ /* integer and fractional part modulo one octant */
+ i = z;
+@@ -356,7 +356,7 @@
+ 	}
+ else
+ 	{
+-	y = 1.0 - ldexp(zz,-1) + zz * zz * polevl( zz, coscof, 5 );
++	y = 1.0 - cephes_ldexp(zz,-1) + zz * zz * polevl( zz, coscof, 5 );
+ 	}
+ 
+ if(sign < 0)
+--- Math-Cephes-0.36/libmd/sindg.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/sindg.c	2003-10-26 12:20:38.521678240 +0100
+@@ -176,10 +176,10 @@
+ 
+ #ifdef ANSIPROT
+ extern double polevl ( double, void *, int );
+-extern double floor ( double );
+-extern double ldexp ( double, int );
++extern double cephes_floor ( double );
++extern double cephes_ldexp ( double, int );
+ #else
+-double polevl(), floor(), ldexp();
++double polevl(), cephes_floor(), cephes_ldexp();
+ #endif
+ extern double PIO4;
+ 
+@@ -203,12 +203,12 @@
+ 	return(0.0);
+ 	}
+ 
+-y = floor( x/45.0 ); /* integer part of x/PIO4 */
++y = cephes_floor( x/45.0 ); /* integer part of x/PIO4 */
+ 
+ /* strip high bits of integer part to prevent integer overflow */
+-z = ldexp( y, -4 );
+-z = floor(z);           /* integer part of y/8 */
+-z = y - ldexp( z, 4 );  /* y - 16 * (y/16) */
++z = cephes_ldexp( y, -4 );
++z = cephes_floor(z);           /* integer part of y/8 */
++z = y - cephes_ldexp( z, 4 );  /* y - 16 * (y/16) */
+ 
+ j = z; /* convert to integer for tests on the phase angle */
+ /* map zeros to origin */
+@@ -265,10 +265,10 @@
+ 	return(0.0);
+ 	}
+ 
+-y = floor( x/45.0 );
+-z = ldexp( y, -4 );
+-z = floor(z);		/* integer part of y/8 */
+-z = y - ldexp( z, 4 );  /* y - 16 * (y/16) */
++y = cephes_floor( x/45.0 );
++z = cephes_ldexp( y, -4 );
++z = cephes_floor(z);		/* integer part of y/8 */
++z = y - cephes_ldexp( z, 4 );  /* y - 16 * (y/16) */
+ 
+ /* integer and fractional part modulo one octant */
+ j = z;
+--- Math-Cephes-0.36/libmd/tan.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/tan.c	2003-10-26 14:41:36.172919816 +0100
+@@ -182,13 +182,13 @@
+ #ifdef ANSIPROT
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+-extern double floor ( double );
+-extern double ldexp ( double, int );
++extern double cephes_floor ( double );
++extern double cephes_ldexp ( double, int );
+ extern int isnan ( double );
+ extern int isfinite ( double );
+ static double tancot(double, int);
+ #else
+-double polevl(), p1evl(), floor(), ldexp();
++double polevl(), p1evl(), cephes_floor(), cephes_ldexp();
+ static double tancot();
+ int isnan(), isfinite();
+ #endif
+@@ -196,7 +196,7 @@
+ extern double INFINITY;
+ extern double NAN;
+ 
+-double tan(x)
++double cephes_tan(x)
+ double x;
+ {
+ #ifdef MINUSZERO
+@@ -258,12 +258,12 @@
+ 	}
+ 
+ /* compute x mod PIO4 */
+-y = floor( x/PIO4 );
++y = cephes_floor( x/PIO4 );
+ 
+ /* strip high bits of integer part */
+-z = ldexp( y, -3 );
+-z = floor(z);		/* integer part of y/8 */
+-z = y - ldexp( z, 3 );  /* y - 16 * (y/16) */
++z = cephes_ldexp( y, -3 );
++z = cephes_floor(z);		/* integer part of y/8 */
++z = y - cephes_ldexp( z, 3 );  /* y - 16 * (y/16) */
+ 
+ /* integer and fractional part modulo one octant */
+ j = z;
+--- Math-Cephes-0.36/libmd/tandg.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/tandg.c	2003-10-26 12:21:18.081664208 +0100
+@@ -149,11 +149,11 @@
+ #ifdef ANSIPROT
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+-extern double floor ( double );
+-extern double ldexp ( double, int );
++extern double cephes_floor ( double );
++extern double cephes_ldexp ( double, int );
+ static double tancot( double, int );
+ #else
+-double polevl(), p1evl(), floor(), ldexp();
++double polevl(), p1evl(), cephes_floor(), cephes_ldexp();
+ static double tancot();
+ #endif
+ extern double MAXNUM;
+@@ -202,12 +202,12 @@
+ 	}
+ 
+ /* compute x mod PIO4 */
+-y = floor( x/45.0 );
++y = cephes_floor( x/45.0 );
+ 
+ /* strip high bits of integer part */
+-z = ldexp( y, -3 );
+-z = floor(z);		/* integer part of y/8 */
+-z = y - ldexp( z, 3 );  /* y - 16 * (y/16) */
++z = cephes_ldexp( y, -3 );
++z = cephes_floor(z);		/* integer part of y/8 */
++z = y - cephes_ldexp( z, 3 );  /* y - 16 * (y/16) */
+ 
+ /* integer and fractional part modulo one octant */
+ j = z;
+--- Math-Cephes-0.36/libmd/log.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/log.c	2003-10-26 12:34:50.414170896 +0100
+@@ -193,20 +193,20 @@
+ #endif
+ 
+ #ifdef ANSIPROT
+-extern double frexp ( double, int * );
+-extern double ldexp ( double, int );
++extern double cephes_frexp ( double, int * );
++extern double cephes_ldexp ( double, int );
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+ extern int isnan ( double );
+ extern int isfinite ( double );
+ #else
+-double frexp(), ldexp(), polevl(), p1evl();
++double cephes_frexp(), cephes_ldexp(), polevl(), p1evl();
+ int isnan(), isfinite();
+ #endif
+ #define SQRTH 0.70710678118654752440
+ extern double INFINITY, NAN;
+ 
+-double log(x)
++double cephes_log(x)
+ double x;
+ {
+ int e;
+@@ -252,7 +252,7 @@
+  * will be handled properly.
+  */
+ #ifdef IBMPC
+-x = frexp( x, &e );
++x = cephes_frexp( x, &e );
+ /*
+ q = (short *)&x;
+ q += 3;
+@@ -265,11 +265,11 @@
+ 
+ /* Equivalent C language standard library function: */
+ #ifdef UNK
+-x = frexp( x, &e );
++x = cephes_frexp( x, &e );
+ #endif
+ 
+ #ifdef MIEEE
+-x = frexp( x, &e );
++x = cephes_frexp( x, &e );
+ #endif
+ 
+ 
+@@ -313,7 +313,7 @@
+ if( x < SQRTH )
+ 	{
+ 	e -= 1;
+-	x = ldexp( x, 1 ) - 1.0; /*  2x - 1  */
++	x = cephes_ldexp( x, 1 ) - 1.0; /*  2x - 1  */
+ 	}	
+ else
+ 	{
+@@ -330,7 +330,7 @@
+ #endif
+ if( e )
+ 	y = y - e * 2.121944400546905827679e-4;
+-y = y - ldexp( z, -1 );   /*  y - 0.5 * z  */
++y = y - cephes_ldexp( z, -1 );   /*  y - 0.5 * z  */
+ z = x + y;
+ if( e )
+ 	z = z + e * 0.693359375;
+--- Math-Cephes-0.36/libmd/log10.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/log10.c	2003-10-26 12:45:19.987461208 +0100
+@@ -142,19 +142,19 @@
+ #define L10EB 7.00731903251827651129E-4
+ 
+ #ifdef ANSIPROT
+-extern double frexp ( double, int * );
+-extern double ldexp ( double, int );
++extern double cephes_frexp ( double, int * );
++extern double cephes_ldexp ( double, int );
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+ extern int isnan ( double );
+ extern int isfinite ( double );
+ #else
+-double frexp(), ldexp(), polevl(), p1evl();
++double cephes_frexp(), cephes_ldexp(), polevl(), p1evl();
+ int isnan(), isfinite();
+ #endif
+ extern double LOGE2, SQRT2, INFINITY, NAN;
+ 
+-double log10(x)
++double cephes_log10(x)
+ double x;
+ {
+ VOLATILE double z;
+@@ -198,7 +198,7 @@
+ #endif
+ 
+ #ifdef IBMPC
+-x = frexp( x, &e );
++x = cephes_frexp( x, &e );
+ /*
+ q = (short *)&x;
+ q += 3;
+@@ -211,11 +211,11 @@
+ 
+ /* Equivalent C language standard library function: */
+ #ifdef UNK
+-x = frexp( x, &e );
++x = cephes_frexp( x, &e );
+ #endif
+ 
+ #ifdef MIEEE
+-x = frexp( x, &e );
++x = cephes_frexp( x, &e );
+ #endif
+ 
+ /* logarithm using log(1+x) = x - .5x**2 + x**3 P(x)/Q(x) */
+@@ -223,7 +223,7 @@
+ if( x < SQRTH )
+ 	{
+ 	e -= 1;
+-	x = ldexp( x, 1 ) - 1.0; /*  2x - 1  */
++	x = cephes_ldexp( x, 1 ) - 1.0; /*  2x - 1  */
+ 	}	
+ else
+ 	{
+@@ -234,7 +234,7 @@
+ /* rational form */
+ z = x*x;
+ y = x * ( z * polevl( x, P, 6 ) / p1evl( x, Q, 6 ) );
+-y = y - ldexp( z, -1 );   /*  y - 0.5 * x**2  */
++y = y - cephes_ldexp( z, -1 );   /*  y - 0.5 * x**2  */
+ 
+ /* multiply log of fraction by log10(e)
+  * and base 2 exponent by log10(2)
+--- Math-Cephes-0.36/libmd/log2.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/log2.c	2003-10-26 12:46:33.456292248 +0100
+@@ -202,20 +202,20 @@
+ #endif
+ 
+ #ifdef ANSIPROT
+-extern double frexp ( double, int * );
+-extern double ldexp ( double, int );
++extern double cephes_frexp ( double, int * );
++extern double cephes_ldexp ( double, int );
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+ extern int isnan ( double );
+ extern int isfinite ( double );
+ #else
+-double frexp(), ldexp(), polevl(), p1evl();
++double cephes_frexp(), cephes_ldexp(), polevl(), p1evl();
+ int isnan(), isfinite();
+ #endif
+ #define SQRTH 0.70710678118654752440
+ extern double LOGE2, INFINITY, NAN;
+ 
+-double log2(x)
++double cephes_log2(x)
+ double x;
+ {
+ int e;
+@@ -262,7 +262,7 @@
+  * will be handled properly.
+  */
+ #ifdef IBMPC
+-x = frexp( x, &e );
++x = cephes_frexp( x, &e );
+ /*
+ q = (short *)&x;
+ q += 3;
+@@ -275,11 +275,11 @@
+ 
+ /* Equivalent C language standard library function: */
+ #ifdef UNK
+-x = frexp( x, &e );
++x = cephes_frexp( x, &e );
+ #endif
+ 
+ #ifdef MIEEE
+-x = frexp( x, &e );
++x = cephes_frexp( x, &e );
+ #endif
+ 
+ 
+@@ -315,7 +315,7 @@
+ if( x < SQRTH )
+ 	{
+ 	e -= 1;
+-	x = ldexp( x, 1 ) - 1.0; /*  2x - 1  */
++	x = cephes_ldexp( x, 1 ) - 1.0; /*  2x - 1  */
+ 	}	
+ else
+ 	{
+@@ -324,9 +324,9 @@
+ 
+ z = x*x;
+ #if DEC
+-y = x * ( z * polevl( x, P, 5 ) / p1evl( x, Q, 6 ) ) - ldexp( z, -1 );
++y = x * ( z * polevl( x, P, 5 ) / p1evl( x, Q, 6 ) ) - cephes_ldexp( z, -1 );
+ #else
+-y = x * ( z * polevl( x, P, 5 ) / p1evl( x, Q, 5 ) ) - ldexp( z, -1 );
++y = x * ( z * polevl( x, P, 5 ) / p1evl( x, Q, 5 ) ) - cephes_ldexp( z, -1 );
+ #endif
+ 
+ ldone:
+--- Math-Cephes-0.36/libmd/powi.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/powi.c	2003-10-26 12:41:56.900335144 +0100
+@@ -45,11 +45,11 @@
+ 
+ #include "mconf.h"
+ #ifdef ANSIPROT
+-extern double log ( double );
+-extern double frexp ( double, int * );
++extern double cephes_log ( double );
++extern double cephes_frexp ( double, int * );
+ extern int signbit ( double );
+ #else
+-double log(), frexp();
++double cephes_log(), cephes_frexp();
+ int signbit();
+ #endif
+ extern double NEGZERO, INFINITY, MAXNUM, MAXLOG, MINLOG, LOGE2;
+@@ -110,7 +110,7 @@
+ /* Overflow detection */
+ 
+ /* Calculate approximate logarithm of answer */
+-s = frexp( x, &lx );
++s = cephes_frexp( x, &lx );
+ e = (lx - 1)*n;
+ if( (e == 0) || (e > 64) || (e < -64) )
+ 	{
+--- Math-Cephes-0.36/libmd/yn.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/yn.c	2003-10-26 12:43:39.361758640 +0100
+@@ -54,15 +54,15 @@
+ 
+ #include "mconf.h"
+ #ifdef ANSIPROT
+-extern double y0 ( double );
+-extern double y1 ( double );
+-extern double log ( double );
++extern double cephes_y0 ( double );
++extern double cephes_y1 ( double );
++extern double cephes_log ( double );
+ #else
+-double y0(), y1(), log();
++double cephes_y0(), cephes_y1(), cephes_log();
+ #endif
+ extern double MAXNUM, MAXLOG;
+ 
+-double yn( n, x )
++double cephes_yn( n, x )
+ int n;
+ double x;
+ {
+@@ -82,9 +82,9 @@
+ 
+ 
+ if( n == 0 )
+-	return( sign * y0(x) );
++	return( sign * cephes_y0(x) );
+ if( n == 1 )
+-	return( sign * y1(x) );
++	return( sign * cephes_y1(x) );
+ 
+ /* test for overflow */
+ if( x <= 0.0 )
+@@ -95,8 +95,8 @@
+ 
+ /* forward recurrence on n */
+ 
+-anm2 = y0(x);
+-anm1 = y1(x);
++anm2 = cephes_y0(x);
++anm1 = cephes_y1(x);
+ k = 1;
+ r = 2 * k;
+ do
+--- Math-Cephes-0.36/libmd/ellpe.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/ellpe.c	2003-10-26 12:37:06.344506344 +0100
+@@ -175,9 +175,9 @@
+ 
+ #ifdef ANSIPROT
+ extern double polevl ( double, void *, int );
+-extern double log ( double );
++extern double cephes_log ( double );
+ #else
+-double polevl(), log();
++double polevl(), cephes_log();
+ #endif
+ 
+ double ellpe(x)
+@@ -191,5 +191,5 @@
+ 	mtherr( "ellpe", DOMAIN );
+ 	return( 0.0 );
+ 	}
+-return( polevl(x,P,10) - log(x) * (x * polevl(x,Q,9)) );
++return( polevl(x,P,10) - cephes_log(x) * (x * polevl(x,Q,9)) );
+ }
+--- Math-Cephes-0.36/libmd/ellpk.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/ellpk.c	2003-10-26 12:37:35.207118560 +0100
+@@ -199,9 +199,9 @@
+ #ifdef ANSIPROT
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+-extern double log ( double );
++extern double cephes_log ( double );
+ #else
+-double polevl(), p1evl(), log();
++double polevl(), p1evl(), cephes_log();
+ #endif
+ extern double MACHEP, MAXNUM;
+ 
+@@ -217,7 +217,7 @@
+ 
+ if( x > MACHEP )
+ 	{
+-	return( polevl(x,P,10) - log(x) * polevl(x,Q,10) );
++	return( polevl(x,P,10) - cephes_log(x) * polevl(x,Q,10) );
+ 	}
+ else
+ 	{
+@@ -228,7 +228,7 @@
+ 		}
+ 	else
+ 		{
+-		return( C1 - 0.5 * log(x) );
++		return( C1 - 0.5 * cephes_log(x) );
+ 		}
+ 	}
+ }
+--- Math-Cephes-0.36/libmd/sici.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/sici.c	2003-10-26 13:11:32.249441056 +0100
+@@ -576,13 +576,13 @@
+ #endif
+ 
+ #ifdef ANSIPROT
+-extern double log ( double );
+-extern double sin ( double );
+-extern double cos ( double );
++extern double cephes_log ( double );
++extern double cephes_sin ( double );
++extern double cephes_cos ( double );
+ extern double polevl ( double, void *, int );
+ extern double p1evl ( double, void *, int );
+ #else
+-double log(), sin(), cos(), polevl(), p1evl();
++double cephes_log(), cephes_sin(), cephes_cos(), polevl(), p1evl();
+ #endif
+ #define EUL 0.57721566490153286061
+ extern double MAXNUM, PIO2, MACHEP;
+@@ -614,8 +614,8 @@
+ 
+ if( x > 1.0e9 )
+ 	{
+-	*si = PIO2 - cos(x)/x;
+-	*ci = sin(x)/x;
++	*si = PIO2 - cephes_cos(x)/x;
++	*ci = cephes_sin(x)/x;
+ 	return( 0 );
+ 	}
+ 
+@@ -631,7 +631,7 @@
+ if( sign )
+ 	s = -s;
+ *si = s;
+-*ci = EUL + log(x) + c;	/* real part if x < 0 */
++*ci = EUL + cephes_log(x) + c;	/* real part if x < 0 */
+ return(0);
+ 
+ 
+@@ -653,8 +653,8 @@
+ 
+ asympt:
+ 
+-s = sin(x);
+-c = cos(x);
++s = cephes_sin(x);
++c = cephes_cos(x);
+ z = 1.0/(x*x);
+ if( x < 8.0 )
+ 	{
+--- Math-Cephes-0.36/libmd/bdtr.c.orig	2002-08-23 00:00:16.000000000 +0200
++++ Math-Cephes-0.36/libmd/bdtr.c	2003-10-26 14:46:57.915007584 +0100
+@@ -150,11 +150,11 @@
+ #ifdef ANSIPROT
+ extern double incbet ( double, double, double );
+ extern double incbi ( double, double, double );
+-extern double pow ( double, double );
+-extern double log1p ( double );
+-extern double expm1 ( double );
++extern double cephes_pow ( double, double );
++extern double cephes_log1p ( double );
++extern double cephes_expm1 ( double );
+ #else
+-double incbet(), incbi(), pow(), log1p(), expm1();
++double incbet(), incbi(), cephes_pow(), cephes_log1p(), cephes_expm1();
+ #endif
+ 
+ double bdtrc( k, n, p )
+@@ -181,9 +181,9 @@
+ if( k == 0 )
+ 	{
+ 	if( p < .01 )
+-		dk = -expm1( dn * log1p(-p) );
++		dk = -cephes_expm1( dn * cephes_log1p(-p) );
+ 	else
+-		dk = 1.0 - pow( 1.0-p, dn );
++		dk = 1.0 - cephes_pow( 1.0-p, dn );
+ 	}
+ else
+ 	{
+@@ -216,7 +216,7 @@
+ dn = n - k;
+ if( k == 0 )
+ 	{
+-	dk = pow( 1.0-p, dn );
++	dk = cephes_pow( 1.0-p, dn );
+ 	}
+ else
+ 	{
+@@ -246,9 +246,9 @@
+ if( k == 0 )
+ 	{
+ 	if( y > 0.8 )
+-		p = -expm1( log1p(y-1.0) / dn );
++		p = -cephes_expm1( cephes_log1p(y-1.0) / dn );
+ 	else
+-		p = 1.0 - pow( y, 1.0/dn );
++		p = 1.0 - cephes_pow( y, 1.0/dn );
+ 	}
+ else
+ 	{
