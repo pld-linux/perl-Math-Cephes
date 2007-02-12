@@ -6,7 +6,7 @@
 %define		pdir	Math
 %define		pnam	Cephes
 Summary:	Math::Cephes - Perl interface to the cephes math library
-Summary(pl):	Math::Cephes - interfejs perlowy do biblioteki matematycznej cephes
+Summary(pl.UTF-8):   Math::Cephes - interfejs perlowy do biblioteki matematycznej cephes
 Name:		perl-Math-Cephes
 Version:	0.43
 Release:	1
@@ -25,8 +25,8 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 This module provides an interface to over 150 functions of the cephes
 math library of Stephen Moshier.
 
-%description -l pl
-Ten modu≥ dostarcza interfejs do ponad 150 funkcji z biblioteki
+%description -l pl.UTF-8
+Ten modu≈Ç dostarcza interfejs do ponad 150 funkcji z biblioteki
 matematycznej cephes autorstwa Stephena Moshiera.
 
 %prep
