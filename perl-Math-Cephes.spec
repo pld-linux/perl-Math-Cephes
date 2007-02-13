@@ -6,7 +6,7 @@
 %define		pdir	Math
 %define		pnam	Cephes
 Summary:	Math::Cephes - Perl interface to the cephes math library
-Summary(pl.UTF-8):   Math::Cephes - interfejs perlowy do biblioteki matematycznej cephes
+Summary(pl.UTF-8):	Math::Cephes - interfejs perlowy do biblioteki matematycznej cephes
 Name:		perl-Math-Cephes
 Version:	0.43
 Release:	1
