@@ -8,13 +8,13 @@
 Summary:	Math::Cephes - Perl interface to the cephes math library
 Summary(pl.UTF-8):	Math::Cephes - interfejs perlowy do biblioteki matematycznej cephes
 Name:		perl-Math-Cephes
-Version:	0.43
-Release:	2
+Version:	0.46
+Release:	1
 # same as perl
 License:	GPL v1+ or Artistic
 Group:		Development/Languages/Perl
 Source0:	http://www.cpan.org/modules/by-module/Math/%{pdir}-%{pnam}-%{version}.tar.gz
-# Source0-md5:	82df7759b5b1c7dc49a79fc616847168
+# Source0-md5:	1f1d56dcc5829d5b3a08fe7e4f363eb3
 URL:		http://search.cpan.org/dist/Math-Cephes/
 BuildRequires:	perl-devel >= 1:5.8.0
 BuildRequires:	rpm-perlprov >= 4.1-13
@@ -49,6 +49,8 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
+rm -f $RPM_BUILD_ROOT%{perl_vendorarch}/Math/Cephes.pod
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -59,6 +61,8 @@ rm -rf $RPM_BUILD_ROOT
 %{perl_vendorarch}/Math/Cephes.pm
 %{perl_vendorarch}/Math/Cephes
 %dir %{perl_vendorarch}/auto/Math/Cephes
+%dir %{perl_vendorarch}/auto/Math/Cephes/libmd
 %{perl_vendorarch}/auto/Math/Cephes/Cephes.bs
+%{perl_vendorarch}/auto/Math/Cephes/libmd/extralibs.ld
 %attr(755,root,root) %{perl_vendorarch}/auto/Math/Cephes/Cephes.so
 %{_mandir}/man[13]/*
