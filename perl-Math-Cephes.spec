@@ -8,13 +8,13 @@
 Summary:	Math::Cephes - Perl interface to the cephes math library
 Summary(pl.UTF-8):	Math::Cephes - interfejs perlowy do biblioteki matematycznej cephes
 Name:		perl-Math-Cephes
-Version:	0.46
+Version:	0.47
 Release:	1
 # same as perl
 License:	GPL v1+ or Artistic
 Group:		Development/Languages/Perl
 Source0:	http://www.cpan.org/modules/by-module/Math/%{pdir}-%{pnam}-%{version}.tar.gz
-# Source0-md5:	1f1d56dcc5829d5b3a08fe7e4f363eb3
+# Source0-md5:	eb3609c95652b5dcfb0ba116c9295ab4
 URL:		http://search.cpan.org/dist/Math-Cephes/
 BuildRequires:	perl-devel >= 1:5.8.0
 BuildRequires:	rpm-perlprov >= 4.1-13
