@@ -62,7 +62,6 @@ rm -rf $RPM_BUILD_ROOT
 %{perl_vendorarch}/Math/Cephes
 %dir %{perl_vendorarch}/auto/Math/Cephes
 %dir %{perl_vendorarch}/auto/Math/Cephes/libmd
-%{perl_vendorarch}/auto/Math/Cephes/Cephes.bs
 %{perl_vendorarch}/auto/Math/Cephes/libmd/extralibs.ld
 %attr(755,root,root) %{perl_vendorarch}/auto/Math/Cephes/Cephes.so
 %{_mandir}/man[13]/*
